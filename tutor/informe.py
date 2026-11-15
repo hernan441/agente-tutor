@@ -122,6 +122,8 @@ def escribir_informe(cfg, unidad, res: dict, sintesis: dict, hoy, uso: dict) -> 
               "", f"**Gasto de IA:** {seg['gasto']}"]
     o += ["", "## Pendiente de revisión del docente",
           f"Devoluciones y recordatorios: `borradores/{unidad.codigo}/`. Ninguno fue enviado.", "",
+          f"_Cómo se resolvió cada entrega: {', '.join(f'{k}: {v}' for k, v in (uso.get('caminos') or {}).items()) or '—'} "
+          "(plantilla y caché = sin IA; rápido = modelo chico; fuerte = modelo grande)._", "",
           f"_Uso de IA en esta corrida: {uso.get('llamadas', 0)} llamadas, {uso.get('entrada', 0):,} tokens de entrada, "
           f"{uso.get('salida', 0):,} de salida, US$ {uso.get('costo', 0):.4f}._"]
     ruta = cfg.datos / "informes" / f"{unidad.codigo}_{hoy:%Y-%m-%d}.md"

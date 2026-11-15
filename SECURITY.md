@@ -48,5 +48,11 @@ Un alumno puede intentar manipular la evaluación desde el texto, un PDF o una f
    arriba de todo en el informe.
 4. **El docente revisa siempre** antes de enviar.
 
+## 4. Retención de datos
+Al cerrar el ciclo lectivo, `./tutor.sh purgar --ciclo AAAA --confirmar` borra entregas, adjuntos,
+evaluaciones, devoluciones y legajos de ese año; con `--anonimizar` conserva los resultados con
+alumnos anónimos (útil para analizar la experiencia sin datos personales). Siempre se conservan
+solo las métricas agregadas de uso de la IA.
+
 ## Reportar un problema
 Abrí un issue en el repositorio describiendo el caso (sin datos reales de alumnos).

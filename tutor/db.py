@@ -81,6 +81,29 @@ CREATE TABLE IF NOT EXISTS rechazos (
     fecha TEXT NOT NULL,
     UNIQUE (mail, origen)
 );
+CREATE TABLE IF NOT EXISTS llamadas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    corrida_inicio TEXT,
+    fecha TEXT NOT NULL,
+    tipo TEXT NOT NULL,          -- evaluar | sintesis | eval_agente
+    camino TEXT,                 -- rapido | fuerte
+    modelo TEXT,
+    entregas INTEGER,
+    ms INTEGER,
+    tokens_entrada INTEGER,
+    tokens_cache INTEGER,
+    tokens_salida INTEGER,
+    costo_usd REAL,
+    intento INTEGER,
+    invalidas INTEGER,           -- respuestas que no pasaron la validación
+    error TEXT,
+    version_prompt TEXT
+);
+CREATE TABLE IF NOT EXISTS cache_evaluaciones (
+    clave TEXT PRIMARY KEY,      -- huella(texto) + unidad + actividad + versión del prompt
+    json TEXT NOT NULL,
+    creado_en TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS corridas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     inicio TEXT NOT NULL,
@@ -101,6 +124,11 @@ COLUMNAS_NUEVAS = [
     ("entregas", "flags", "TEXT"),                           # JSON: sospechas, recortes, etc.
     ("adjuntos", "alertas", "TEXT"),                         # JSON: texto oculto, límites, inyección
     ("analisis", "intento_manipulacion", "INTEGER NOT NULL DEFAULT 0"),
+    ("analisis", "camino", "TEXT"),                          # plantilla | cache | rapido | fuerte
+    ("analisis", "modelo", "TEXT"),
+    ("analisis", "version_prompt", "TEXT"),
+    ("devoluciones", "texto_enviado", "TEXT"),               # lo que el docente terminó mandando
+    ("devoluciones", "edicion_pct", "REAL"),                 # cuánto lo cambió (0 = nada)
 ]
 
 

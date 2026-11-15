@@ -22,7 +22,10 @@ whisper_modelo = "medium"
 
 [ia]
 claude_bin = "claude"
-modelo = "haiku"
+# Router: lo normal va al modelo rápido; imágenes, sospechas y reintentos al fuerte.
+# Fijados por versión para que los resultados sean comparables entre corridas.
+modelo_rapido = "claude-haiku-5-5"
+modelo_fuerte = "claude-sonnet-5-5"
 lote_max = 6
 
 [seguridad]

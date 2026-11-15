@@ -36,6 +36,21 @@ Drive (archivos que suben los alumnos) ┘                                   │
 
 Solo cuando una foto no tiene texto legible (un dibujo, letra manuscrita) se le pasa esa imagen reducida a la IA.
 
+## Las capas de una IA propia
+
+| # | Capa | Cómo está resuelta |
+|---|---|---|
+| 1 | **Prompt** | `.claude/agents/tutor.md`: rol, escalera de la retroalimentación, reglas, ejemplo resuelto y salida JSON. Cada llamada registra la versión (hash) del prompt. |
+| 2 | **RAG** | `tutor/rag.py`: BM25 en Python puro sobre el material de la clase. A cada entrega le llegan los 3 fragmentos que vienen al caso, y la devolución manda al alumno a esa sección. |
+| 3 | **Herramientas** | Mínimas a propósito: las herramientas son los scripts. La IA solo puede *leer* las imágenes que tiene que mirar. |
+| 4 | **Accesos** | Solo cuentas del colegio (dominio y nómina). IA en modo restringido, sin conectores, confinada a una carpeta. Datos con permisos de solo dueño. |
+| 5 | **Guardrails** | Detector de prompt injection, texto oculto en PDF, canario, validación de toda salida, control de fuga de la respuesta, [REVISAR], docente en el circuito. Ver [SECURITY.md](SECURITY.md). |
+| 6 | **Caché** | Adjuntos por hash; evaluaciones reutilizadas si el mismo texto vuelve a llegar; la parte fija del prompt va primero y una sola vez por tanda. |
+| 7 | **Router** | `tutor/router.py`: entregas mínimas → plantilla (0 tokens); lo normal → modelo rápido (Haiku); imágenes, sospechas o salidas inválidas → modelo fuerte (Sonnet). Modelos fijados por versión. |
+| 8 | **Observabilidad** | Tabla `llamadas` (modelo, latencia, tokens, costo, reintentos, validaciones fallidas, versión del prompt) y `./tutor.sh metricas`. Calidad real: cuánto edita el docente cada borrador antes de enviarlo (`./tutor.sh calidad`). |
+| 9 | **Evaluación contra el docente** | `evals/`: el docente corrige casos a mano y `./tutor.sh evaluar-agente` mide la coincidencia del agente, criterio por criterio. Es la única forma honesta de decir que el agente es "preciso". |
+| + | **Retención de datos** | `./tutor.sh purgar --ciclo 2026 [--anonimizar]` al cerrar el ciclo. |
+
 ## Teorías de la diplomatura que aplica
 
 | Marco | Dónde aparece |
@@ -58,6 +73,9 @@ cp config.example.toml config.toml        # completar
 ./tutor.sh procesar BIO6-ALIM --subir     # además sube los borradores a la casilla (no envía)
 ./tutor.sh estado                         # inscriptos, rechazos, cuarentena
 ./tutor.sh liberar 12                     # saca la entrega #12 de cuarentena
+./tutor.sh metricas                       # costo, latencia, router, calidad
+./tutor.sh evaluar-agente                 # coincidencia con los niveles del docente (evals/casos.csv)
+./tutor.sh purgar --ciclo 2026 --anonimizar --confirmar   # retención de datos
 ```
 
 Requiere el CLI de Claude Code (`claude`) con el agente `.claude/agents/tutor.md`. Para audios,

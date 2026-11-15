@@ -28,7 +28,8 @@ class Config:
     whisper_modelo: str = "medium"
     # IA
     claude_bin: str = "claude"
-    modelo: str = "haiku"
+    modelo_rapido: str = "claude-haiku-5-5"   # fijado por versión: resultados reproducibles
+    modelo_fuerte: str = "claude-sonnet-5-5"
     lote_max: int = 6
     # Seguridad
     dominios_permitidos: list = field(default_factory=lambda: ["colegio.edu.ar"])
@@ -64,7 +65,9 @@ def cargar(piloto: bool = False) -> Config:
                 else:
                     plano[k] = v
             for k, v in plano.items():
-                if k == "datos":
+                if k == "modelo":  # compatibilidad con configs viejas
+                    cfg.modelo_rapido = v
+                elif k == "datos":
                     cfg.datos = (RAIZ / v).resolve()
                 elif hasattr(cfg, k) and k not in ("unidades", "plantillas", "raiz", "extra"):
                     setattr(cfg, k, v)

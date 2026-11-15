@@ -109,7 +109,7 @@ def test_tope_de_gasto_corta(cfg, con, monkeypatch, capsys):
     from tutor import cli
     llamadas = []
 
-    def falsa(cfg_, paquetes):
+    def falsa(cfg_, paquetes, modelo=None):
         llamadas.append(len(paquetes))
         return [], {"entrada": 1, "salida": 1, "costo": 5.0}  # una llamada cara
 
@@ -119,7 +119,7 @@ def test_tope_de_gasto_corta(cfg, con, monkeypatch, capsys):
     monkeypatch.setattr(config, "cargar", lambda piloto=False: cfg)
     cli.main(["--piloto", "--hoy", "2026-11-20", "procesar", "BIO6-ALIM"])
     assert "CORTE" in capsys.readouterr().out
-    assert len(llamadas) <= 2  # la primera supera el tope; a lo sumo un reintento de esa tanda
+    assert len(llamadas) <= 3  # la primera tanda supera el tope (rápido + reintento fuerte); no sigue con otras
 
 
 # ---------- 3. prompt injection ----------
@@ -222,7 +222,7 @@ def test_lo_interno_no_viaja_a_la_ia(cfg, con, unidad, monkeypatch):
     p["_sospechas"] = ["x"]
     visto = {}
 
-    def falsa(c, prompt, abre="[", con_imagenes=False):
+    def falsa(c, prompt, abre="[", con_imagenes=False, modelo=None):
         visto["p"] = prompt
         return [], {}
 

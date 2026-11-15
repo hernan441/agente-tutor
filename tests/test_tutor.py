@@ -51,7 +51,7 @@ def test_sync_piloto_sin_duplicar(cfg, con):
     r1 = sync.sincronizar(cfg, con)
     r2 = sync.sincronizar(cfg, con)
     assert r1["inscripcion"]["nuevos"] == 8 and r1["inscripcion"]["rechazados"] == 2
-    assert r1["entregas"]["nuevas"] == 13 and r1["entregas"]["sin_inscripcion"] == 1
+    assert r1["entregas"]["nuevas"] == 14 and r1["entregas"]["sin_inscripcion"] == 1
     assert r2["entregas"]["nuevas"] == 0
 
 
@@ -147,12 +147,12 @@ def test_pendientes_y_recordatorio(cfg, con, unidad):
     sync.sincronizar(cfg, con)
     hechos = pendientes.generar(con, unidad, datetime(2026, 11, 20))
     faltan = {(h["nombre"], h["actividad"]) for h in hechos}
-    assert faltan == {("Valentina", "A1"), ("Valentina", "A4"), ("Joaquín", "A4"), ("Bruno", "A1"), ("Camila", "A1")}
+    assert faltan == {("Valentina", "A1"), ("Valentina", "A4"), ("Joaquín", "A4"), ("Bruno", "A1")}
     # antes del plazo de 48 h, la A4 todavía no se reclama
     assert all(f["actividad"] == "A1" for f in pendientes.faltantes(con, unidad, datetime(2026, 11, 18, 12)))
     # no duplica
     pendientes.generar(con, unidad, datetime(2026, 11, 21))
-    assert con.execute("SELECT COUNT(*) FROM devoluciones WHERE tipo='recordatorio'").fetchone()[0] == 5
+    assert con.execute("SELECT COUNT(*) FROM devoluciones WHERE tipo='recordatorio'").fetchone()[0] == 4
 
 
 def test_correo_no_puede_enviar():

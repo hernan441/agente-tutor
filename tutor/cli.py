@@ -12,11 +12,9 @@ Opciones: --piloto (datos de prueba, sin Google ni IMAP) · --hoy AAAA-MM-DD · 
 import argparse
 import json
 import os
-import secrets
 from datetime import datetime
-from itertools import groupby
 
-from . import adjuntos, aplicar, config, correo, db, ia, informe, lote, pendientes, seguridad, sync, unidades
+from . import adjuntos, config, correo, db, evals, ia, informe, lote, motor, observabilidad, pendientes, seguridad, sync, unidades
 
 
 def _env(cfg):
@@ -63,6 +61,56 @@ def cmd_liberar(cfg, con, a):
     print("liberada" if seguridad.liberar(con, a.id) else "no estaba en cuarentena")
 
 
+def cmd_metricas(cfg, con, a):
+    print(observabilidad.metricas(con))
+
+
+def cmd_calidad(cfg, con, a):
+    n = observabilidad.registrar_enviados(con, observabilidad.leer_enviados_imap(cfg, a.dias))
+    print(f"{n} devoluciones enviadas emparejadas con su borrador. Ver ./tutor.sh metricas")
+
+
+def cmd_evaluar_agente(cfg, con, a):
+    ruta = evals.correr(cfg, cfg.raiz / a.casos, a.modelo)
+    print(f"resultado: {ruta}")
+    print("\n".join(ruta.read_text(encoding="utf-8").splitlines()[:10]))
+
+
+def cmd_purgar(cfg, con, a):
+    """Retención de datos: borra o anonimiza un ciclo lectivo cerrado."""
+    ids = [r[0] for r in con.execute("SELECT id FROM entregas WHERE substr(marca_temporal,1,4)=?", (str(a.ciclo),))]
+    mails = sorted({r[0] for r in con.execute("SELECT mail FROM entregas WHERE substr(marca_temporal,1,4)=?", (str(a.ciclo),))})
+    if not a.confirmar:
+        print(f"Ciclo {a.ciclo}: {len(ids)} entregas de {len(mails)} alumnos. "
+              f"Agregá --confirmar para {'anonimizar' if a.anonimizar else 'borrar'} (no se puede deshacer).")
+        return
+    marcas = ",".join("?" * len(ids)) or "NULL"
+    if a.anonimizar:
+        for i, m in enumerate(mails, 1):
+            anon = f"alumno{i:03d}@anonimo.local"
+            con.execute("UPDATE entregas SET mail=?, nombre=?, archivos='' WHERE mail=? AND substr(marca_temporal,1,4)=?",
+                        (anon, f"Alumno {i}", m, str(a.ciclo)))
+            con.execute("UPDATE devoluciones SET mail=?, cuerpo='(anonimizado)', texto_enviado=NULL WHERE mail=?", (anon, m))
+            con.execute("DELETE FROM alumnos WHERE mail=?", (m,))
+        con.execute(f"UPDATE evaluaciones SET evidencia='' WHERE entrega_id IN ({marcas})", ids)
+    else:
+        for t in ("evaluaciones", "analisis", "entrega_adjuntos"):
+            con.execute(f"DELETE FROM {t} WHERE entrega_id IN ({marcas})", ids)
+        con.execute(f"DELETE FROM devoluciones WHERE mail IN ({','.join('?' * len(mails)) or 'NULL'})", mails)
+        con.execute(f"DELETE FROM entregas WHERE id IN ({marcas})", ids)
+        con.execute(f"DELETE FROM alumnos WHERE mail IN ({','.join('?' * len(mails)) or 'NULL'})", mails)
+    con.execute("DELETE FROM adjuntos WHERE sha256 NOT IN (SELECT sha256 FROM entrega_adjuntos)")
+    con.execute("DELETE FROM cache_evaluaciones")
+    con.commit()
+    con.execute("VACUUM")
+    import shutil
+    for carpeta in ("legajos", "borradores", "archivos", "cache"):
+        shutil.rmtree(cfg.datos / carpeta, ignore_errors=True)
+    informe.escribir_legajos(cfg, con)
+    print(f"Ciclo {a.ciclo}: {len(ids)} entregas {'anonimizadas' if a.anonimizar else 'borradas'}. "
+          "Se conservan solo métricas agregadas (llamadas, corridas).")
+
+
 def cmd_pendientes(cfg, con, a):
     u = unidades.buscar(cfg.unidades, a.unidad)
     for f in pendientes.faltantes(con, u, a.hoy):
@@ -80,57 +128,16 @@ def cmd_procesar(cfg, con, a):
     st = adjuntos.procesar_entregas(cfg, con, [f["id"] for f in filas], f"{u.materia}. {u.titulo}")
     print("adjuntos (sin IA):", st)
 
+    corrida = inicio.isoformat(timespec="seconds")
     uso = {"llamadas": 0, "entrada": 0, "salida": 0, "costo": 0.0}
-    procesadas, fallidas = 0, []
-    corte_tope = False
+    procesadas, corte_tope, caminos = 0, False, {}
     if not a.sin_ia:
-        # Por actividad, en orden: así A4 ya ve lo evaluado en A1.
-        for act, grupo in groupby(sorted(filas, key=lambda f: (f["actividad"], f["marca_temporal"])),
-                                  key=lambda f: f["actividad"]):
-            grupo = list(grupo)
-            for i in range(0, len(grupo), cfg.lote_max):
-                if uso["costo"] >= cfg.tope_usd_corrida:
-                    corte_tope = True
-                    break
-                tanda = [lote.paquete(con, u, con.execute("SELECT * FROM entregas WHERE id=?", (f["id"],)).fetchone())
-                         for f in grupo[i:i + cfg.lote_max]]
-                tanda = [p for p in tanda if p]
-                if not tanda:
-                    continue
-                canario = "CANARIO-" + secrets.token_hex(6)
-                for p in tanda:
-                    p["solo_para_vos"]["canario"] = canario
-                    p["_sospechas"] = _sospechas(con, p["entrega_id"])
-                pendientes_tanda = tanda
-                for intento in range(2):
-                    try:
-                        res, us = ia.evaluar(cfg, pendientes_tanda)
-                    except Exception as exc:
-                        print(f"  IA falló ({exc}); reintento" if intento == 0 else f"  IA falló: {exc}")
-                        continue
-                    uso["llamadas"] += 1
-                    for k in ("entrada", "salida", "costo"):
-                        uso[k] += us[k]
-                    por_id = {r.get("entrega_id"): r for r in res if isinstance(r, dict)}
-                    reintentar = []
-                    for p in pendientes_tanda:
-                        r = por_id.get(p["entrega_id"])
-                        try:
-                            if r is None:
-                                raise aplicar.Invalido("sin respuesta")
-                            avisos = aplicar.validar(r, p)
-                            aplicar.guardar(con, u, p, r, avisos)
-                            procesadas += 1
-                        except aplicar.Invalido as exc:
-                            reintentar.append(p)
-                            if intento:
-                                fallidas.append((p["entrega_id"], str(exc)))
-                    if not reintentar:
-                        break
-                    pendientes_tanda = reintentar
-        print(f"IA: {procesadas} evaluadas, {len(fallidas)} fallidas {fallidas or ''}")
+        r = motor.evaluar_entregas(cfg, con, u, filas, corrida)
+        uso, procesadas, corte_tope, caminos = r["uso"], r["procesadas"], r["corte_tope"], r["caminos"]
+        print(f"evaluadas: {procesadas} · caminos: {caminos} · fallidas: {r['fallidas'] or 0}")
         if corte_tope:
             print(f"CORTE: se alcanzó el tope de US$ {cfg.tope_usd_corrida:.2f} por corrida; el resto queda para la próxima")
+    uso["caminos"] = caminos
 
     faltan = pendientes.generar(con, u, a.hoy)
     print(f"recordatorios (sin IA): {len(faltan)}")
@@ -143,6 +150,7 @@ def cmd_procesar(cfg, con, a):
     if any(t["niveles"] for t in res["tabla"]) and not a.sin_ia:
         try:
             sintesis, us = ia.sintesis_informe(cfg, {k: res[k] for k in ("titulo", "ideas", "alertas", "no_entregaron", "notas")})
+            motor.registrar_llamada(con, corrida, "sintesis", "rapido", 0, us)
             uso["llamadas"] += 1
             for k in ("entrada", "salida", "costo"):
                 uso[k] += us[k]
@@ -164,18 +172,6 @@ def cmd_procesar(cfg, con, a):
     print(f"uso IA: {uso['llamadas']} llamadas · {uso['entrada']:,} tokens entrada · {uso['salida']:,} salida · US$ {uso['costo']:.4f}")
 
 
-def _sospechas(con, eid) -> list:
-    """Sospechas de inyección halladas por los scripts (texto del alumno y adjuntos). No se le pasan a la IA."""
-    out = [f.split(":", 1)[1] for f in json.loads(
-        con.execute("SELECT flags FROM entregas WHERE id=?", (eid,)).fetchone()["flags"] or "[]")
-        if f.startswith("sospecha_inyeccion:")]
-    for a in adjuntos.de_entrega(con, eid):
-        for al in json.loads(a.get("alertas") or "[]"):
-            if al.startswith("sospecha_inyeccion:") or al.startswith("texto_oculto"):
-                out.append(f"{al} en {os.path.basename(a['ruta'])}")
-    return out
-
-
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="tutor", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--piloto", action="store_true")
@@ -189,12 +185,21 @@ def main(argv=None):
     p.add_argument("--sin-ia", action="store_true"); p.add_argument("--sin-sync", action="store_true")
     p.add_argument("--subir", action="store_true", help="sube los borradores por IMAP (nunca envía)")
     p = sub.add_parser("liberar", help="saca una entrega de cuarentena"); p.add_argument("id", type=int)
+    sub.add_parser("metricas", help="costos, latencia, router, calidad")
+    p = sub.add_parser("calidad", help="compara borradores con lo enviado (IMAP, solo lectura)")
+    p.add_argument("--dias", type=int, default=30)
+    p = sub.add_parser("evaluar-agente", help="mide al agente contra los niveles del docente")
+    p.add_argument("--casos", default="evals/casos.csv"); p.add_argument("--modelo", default=None)
+    p = sub.add_parser("purgar", help="borra o anonimiza un ciclo cerrado")
+    p.add_argument("--ciclo", type=int, required=True); p.add_argument("--anonimizar", action="store_true")
+    p.add_argument("--confirmar", action="store_true")
     a = ap.parse_args(argv)
     cfg = config.cargar(piloto=a.piloto)
     _env(cfg)
     con = db.conectar(cfg.db)
     {"sync": cmd_sync, "estado": cmd_estado, "unidades": cmd_unidades,
-     "pendientes": cmd_pendientes, "procesar": cmd_procesar, "liberar": cmd_liberar}[a.cmd](cfg, con, a)
+     "pendientes": cmd_pendientes, "procesar": cmd_procesar, "liberar": cmd_liberar, "metricas": cmd_metricas,
+     "calidad": cmd_calidad, "evaluar-agente": cmd_evaluar_agente, "purgar": cmd_purgar}[a.cmd](cfg, con, a)
 
 
 if __name__ == "__main__":

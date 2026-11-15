@@ -99,7 +99,8 @@ def cuerpo_devolucion(r: dict, alumno: str, firma: str) -> str:
     return "\n".join(partes)
 
 
-def guardar(con, unidad, paquete, r: dict, avisos: list):
+def guardar(con, unidad, paquete, r: dict, avisos: list, meta: dict | None = None):
+    meta = meta or {}
     eid = paquete["entrega_id"]
     fila = con.execute("SELECT * FROM entregas WHERE id=?", (eid,)).fetchone()
     for ev in r["evaluaciones"]:
@@ -107,12 +108,13 @@ def guardar(con, unidad, paquete, r: dict, avisos: list):
                     (eid, ev["criterio"], ev["nivel"], ev.get("evidencia", "")))
     con.execute(
         """INSERT OR REPLACE INTO analisis (entrega_id, ideas_erroneas, senal_ia, senal_ia_motivo,
-           nota_docente, proximo_paso, revisar, revisar_motivo, json_raw, intento_manipulacion)
-           VALUES (?,?,?,?,?,?,?,?,?,?)""",
+           nota_docente, proximo_paso, revisar, revisar_motivo, json_raw, intento_manipulacion,
+           camino, modelo, version_prompt)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         (eid, json.dumps(r.get("ideas_erroneas", []), ensure_ascii=False), int(bool(r.get("senal_ia"))),
          r.get("senal_ia_motivo", ""), r.get("nota_docente", ""), r.get("proximo_paso", ""),
          int(bool(avisos)), "; ".join(avisos), json.dumps(r, ensure_ascii=False),
-         int(bool(r.get("intento_manipulacion")))))
+         int(bool(r.get("intento_manipulacion"))), meta.get("camino"), meta.get("modelo"), meta.get("version_prompt")))
     asunto = f"{unidad.materia} — Devolución de {fila['actividad']}: {r['asunto'].strip()}"
     if avisos:
         asunto = "[REVISAR] " + asunto
