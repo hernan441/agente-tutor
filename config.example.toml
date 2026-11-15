@@ -1,0 +1,26 @@
+# Copiar a config.toml (que NO va a git) y completar.
+
+[google]
+# Remoto de rclone autorizado con la cuenta de la cátedra, scope drive.readonly:
+#   rclone config create catedra drive scope=drive.readonly
+rclone_remoto = "catedra"
+hoja_inscripcion = "Inscripción (respuestas)"
+hoja_entregas = "Entregas (respuestas)"
+carpeta_archivos = "Entregas (File responses)"
+
+[correo]
+# Solo se suben BORRADORES por IMAP. El sistema nunca envía mails.
+# La contraseña de aplicación va en .env como TUTOR_IMAP_PASS
+cuenta = "catedra@ejemplo.edu"
+imap_host = "imap.gmail.com"
+firma_remitente = "Cátedra"
+
+[audio]
+# Python con faster-whisper instalado (vacío = el del proyecto)
+audio_python = ""
+whisper_modelo = "medium"
+
+[ia]
+claude_bin = "claude"
+modelo = "haiku"
+lote_max = 6
