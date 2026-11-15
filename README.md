@@ -25,9 +25,10 @@ Drive (archivos que suben los alumnos) ┘                                   │
                                                                            ▼
                 adjuntos: PDF/docx → texto · fotos → OCR · audios → Whisper local   (sin IA)
                                                                            ▼
-                lote: un paquete compacto por entrega (consigna, rúbrica, entrega, antecedentes)
+                lote: un paquete compacto por entrega (consigna, rúbrica, material de clase, entrega, antecedentes)
                                                                            ▼
-                agente tutor (Haiku): evalúa por criterio + redacta la devolución → JSON
+                router: plantilla (sin IA) · Haiku (lo normal) · Sonnet (lo difícil)
+                agente tutor: evalúa por criterio + redacta la devolución → JSON
                                                                            ▼
                 aplicar: valida (niveles, criterios, fuga de respuesta) y guarda       (sin IA)
                 pendientes: quién no entregó → recordatorio con plantilla               (sin IA)
@@ -78,7 +79,7 @@ cp config.example.toml config.toml        # completar
 ./tutor.sh purgar --ciclo 2026 --anonimizar --confirmar   # retención de datos
 ```
 
-Requiere el CLI de Claude Code (`claude`) con el agente `.claude/agents/tutor.md`. Para audios,
+Requiere el CLI de Claude Code (`claude`); el prompt del agente está en `.claude/agents/tutor.md`. Para audios,
 un python con `faster-whisper` (`audio_python` en `config.toml`).
 
 ### Probarlo sin Google (piloto)
@@ -87,9 +88,11 @@ un python con `faster-whisper` (`audio_python` en `config.toml`).
 ./tutor.sh --piloto --hoy 2026-11-20 procesar BIO6-ALIM
 ```
 Usa `piloto/`: 8 alumnos ficticios inscriptos y 2 inscripciones rechazadas (dominio ajeno y alias),
-13 entregas (una sin inscripción y un reenvío duplicado, que quedan en cuarentena; un intento de
-manipular la nota por texto y otro con texto oculto en un PDF, que quedan en [REVISAR]),
-un PDF, una foto de etiqueta, un esquema dibujado y un audio. Las salidas quedan en `datos_piloto/`.
+14 entregas (una sin inscripción y un reenvío duplicado, que quedan en cuarentena; un intento de
+manipular la nota por texto y otro con texto oculto en un PDF, que quedan en [REVISAR]; una entrega
+mínima que se resuelve por plantilla, sin IA), un PDF, una foto de etiqueta, un esquema dibujado y
+un audio. Las salidas quedan en `datos_piloto/`. En `piloto/` hay ejemplos ya generados:
+`ejemplo_informe.md`, `ejemplo_borradores.md` y `ejemplo_metricas.md`.
 
 ### Tests
 
@@ -105,15 +108,35 @@ el material de la clase en `clase.md`. Agregar el código de unidad al desplegab
 
 ## Formularios
 
-Ver `formulario.md` (Entregas) e Inscripción: nombre, apellido, mail verificado y curso.
+Ver `formulario.md`: Inscripción (nombre, apellido, mail del colegio y curso) y Entregas.
 
 ## Estructura
 
 ```
-tutor/            código (db, sync, adjuntos, lote, ia, aplicar, pendientes, informe, correo, cli)
-.claude/agents/   el agente tutor (único punto con IA)
-unidades/         una carpeta por unidad: unidad.md + clase.md
-plantillas/       plantilla de unidad y formatos
-piloto/           datos ficticios para probar
-tests/
+tutor/
+  cli.py            comandos (./tutor.sh …)
+  config.py         configuración (config.toml)
+  db.py             base SQLite
+  sync.py           formularios → base (rclone, solo lectura)
+  seguridad.py      cuentas del colegio, anti-inundación, detector de prompt injection
+  adjuntos.py       PDF, docx, fotos (OCR) y audios (Whisper), sin IA
+  rag.py            búsqueda en el material de la clase (BM25)
+  lote.py           arma el paquete de cada entrega
+  router.py         plantilla / modelo rápido / modelo fuerte
+  motor.py          caché → router → IA → validación
+  ia.py             única puerta a la IA (modo restringido)
+  aplicar.py        valida y guarda lo que devuelve la IA
+  pendientes.py     quién no entregó + recordatorios
+  informe.py        legajos e informe al docente
+  correo.py         .eml y borradores IMAP (nunca envía)
+  observabilidad.py métricas de uso, costo y calidad
+  evals.py          evaluación del agente contra el docente
+  unidades.py       lee unidad.md
+.claude/agents/     el prompt del agente tutor
+unidades/           una carpeta por unidad: unidad.md + clase.md
+plantillas/         plantilla de unidad y formato de devolución
+evals/              casos para que el docente corrija + resultados
+piloto/             datos ficticios y ejemplos de salida
+tests/              63 tests (sin IA)
+SECURITY.md         amenazas y defensas
 ```
