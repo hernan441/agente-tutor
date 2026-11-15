@@ -30,6 +30,18 @@ class Config:
     claude_bin: str = "claude"
     modelo: str = "haiku"
     lote_max: int = 6
+    # Seguridad
+    dominios_permitidos: list = field(default_factory=lambda: ["colegio.edu.ar"])
+    nomina: str = ""
+    max_entregas_por_actividad: int = 3
+    max_entregas_por_alumno_dia: int = 10
+    max_entregas_por_corrida: int = 60
+    tope_usd_corrida: float = 1.00
+    max_caracteres_respuesta: int = 6000
+    max_archivos: int = 5
+    max_mb: float = 15
+    max_minutos_audio: float = 10
+    rafaga_por_minuto: int = 5
     piloto: bool = False
     extra: dict = field(default_factory=dict)
 
@@ -62,7 +74,9 @@ def cargar(piloto: bool = False) -> Config:
     if piloto:
         cfg.piloto = True
         cfg.datos = RAIZ / "datos_piloto"
+        cfg.dominios_permitidos = ["ejemplo.edu"]  # los alumnos ficticios del piloto
+        cfg.nomina = ""
     if os.environ.get("TUTOR_DATOS"):
         cfg.datos = Path(os.environ["TUTOR_DATOS"])
-    cfg.datos.mkdir(parents=True, exist_ok=True)
+    cfg.datos.mkdir(parents=True, exist_ok=True, mode=0o700)
     return cfg

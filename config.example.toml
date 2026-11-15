@@ -24,3 +24,20 @@ whisper_modelo = "medium"
 claude_bin = "claude"
 modelo = "haiku"
 lote_max = 6
+
+[seguridad]
+# Solo se inscriben cuentas de estos dominios (el del colegio). Se pueden poner varios.
+dominios_permitidos = ["colegio.edu.ar"]
+# Opcional: CSV con los mails oficiales de los alumnos; si está, además tienen que figurar ahí.
+nomina = ""
+# Anti-inundación
+max_entregas_por_actividad = 3
+max_entregas_por_alumno_dia = 10
+max_entregas_por_corrida = 60
+tope_usd_corrida = 1.00
+max_caracteres_respuesta = 6000
+rafaga_por_minuto = 5
+# Adjuntos
+max_archivos = 5
+max_mb = 15
+max_minutos_audio = 10

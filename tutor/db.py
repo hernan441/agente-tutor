@@ -73,6 +73,14 @@ CREATE TABLE IF NOT EXISTS devoluciones (
     creado_en TEXT NOT NULL,
     UNIQUE (mail, unidad, actividad, tipo)
 );
+CREATE TABLE IF NOT EXISTS rechazos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    mail TEXT NOT NULL,
+    motivo TEXT NOT NULL,
+    origen TEXT NOT NULL,       -- inscripcion | entrega
+    fecha TEXT NOT NULL,
+    UNIQUE (mail, origen)
+);
 CREATE TABLE IF NOT EXISTS corridas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     inicio TEXT NOT NULL,
@@ -87,12 +95,28 @@ CREATE TABLE IF NOT EXISTS corridas (
 """
 
 
+COLUMNAS_NUEVAS = [
+    ("entregas", "estado", "TEXT NOT NULL DEFAULT 'ok'"),   # ok | cuarentena
+    ("entregas", "motivo_cuarentena", "TEXT"),
+    ("entregas", "flags", "TEXT"),                           # JSON: sospechas, recortes, etc.
+    ("adjuntos", "alertas", "TEXT"),                         # JSON: texto oculto, límites, inyección
+    ("analisis", "intento_manipulacion", "INTEGER NOT NULL DEFAULT 0"),
+]
+
+
 def conectar(ruta: Path) -> sqlite3.Connection:
-    ruta.parent.mkdir(parents=True, exist_ok=True)
+    ruta.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    nueva = not ruta.exists()
     con = sqlite3.connect(ruta)
+    if nueva:
+        ruta.chmod(0o600)
     con.row_factory = sqlite3.Row
     con.execute("PRAGMA foreign_keys = ON")
     con.executescript(ESQUEMA)
+    for tabla, col, tipo in COLUMNAS_NUEVAS:
+        if col not in {r[1] for r in con.execute(f"PRAGMA table_info({tabla})")}:
+            con.execute(f"ALTER TABLE {tabla} ADD COLUMN {col} {tipo}")
+    con.commit()
     return con
 
 

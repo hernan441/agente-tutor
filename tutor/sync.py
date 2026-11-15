@@ -12,7 +12,7 @@ import unicodedata
 from datetime import datetime
 from pathlib import Path
 
-from . import db
+from . import db, seguridad
 
 
 def _norm(s: str) -> str:
@@ -62,13 +62,22 @@ def _fecha(s: str) -> str:
     return s
 
 
-def cargar_inscripciones(con, filas) -> dict:
-    nuevos = actualizados = 0
+def cargar_inscripciones(con, filas, cfg=None) -> dict:
+    """Solo inscribe cuentas del colegio (dominio y nómina si la hay). El resto va a `rechazos`."""
+    nuevos = actualizados = rechazados = 0
+    nomina = seguridad.cargar_nomina(cfg) if cfg else None
     for f in filas:
-        mail = f.get("mail", "").lower()
+        mail = seguridad.normalizar_mail(f.get("mail", ""))
         if not mail:
             continue
-        nombre, apellido = f.get("nombre", ""), f.get("apellido", "")
+        if cfg:
+            motivo = seguridad.validar_mail(cfg, mail, nomina)
+            if motivo:
+                seguridad.rechazar(con, mail, motivo, "inscripcion")
+                rechazados += 1
+                continue
+        nombre = seguridad.limpiar_texto(f.get("nombre", ""))[:60]
+        apellido = seguridad.limpiar_texto(f.get("apellido", ""))[:60]
         if not apellido and " " in nombre:  # "Nombre y apellido" en un solo campo
             nombre, apellido = nombre.split(" ", 1)
         existe = db.inscripto(con, mail)
@@ -81,7 +90,7 @@ def cargar_inscripciones(con, filas) -> dict:
         actualizados += existe
         nuevos += not existe
     con.commit()
-    return {"nuevos": nuevos, "actualizados": actualizados}
+    return {"nuevos": nuevos, "actualizados": actualizados, "rechazados": rechazados}
 
 
 def _resolver_archivos(valor: str, base: Path, por_id: dict) -> list:
@@ -112,9 +121,10 @@ def cargar_entregas(con, filas, base: Path, por_id: dict | None = None) -> dict:
         cur = con.execute(
             """INSERT OR IGNORE INTO entregas (marca_temporal, mail, nombre, unidad, actividad,
                respuesta, uso_ia, autoevaluacion, archivos) VALUES (?,?,?,?,?,?,?,?,?)""",
-            (_fecha(f.get("marca_temporal", "")), mail, f.get("nombre", ""), f["unidad"].strip(),
-             f["actividad"].strip().split()[0], f.get("respuesta", ""), f.get("uso_ia", ""),
-             f.get("autoevaluacion", ""), "\n".join(archivos)),
+            (_fecha(f.get("marca_temporal", "")), mail, seguridad.limpiar_texto(f.get("nombre", ""))[:80],
+             f["unidad"].strip()[:40], f["actividad"].strip().split()[0][:10],
+             seguridad.limpiar_texto(f.get("respuesta", "")), seguridad.limpiar_texto(f.get("uso_ia", "")),
+             seguridad.limpiar_texto(f.get("autoevaluacion", "")), "\n".join(archivos)),
         )
         if cur.rowcount:
             nuevas += 1
@@ -152,7 +162,7 @@ def sincronizar(cfg, con) -> dict:
         ins, ent, por_id = bajar_de_google(cfg)
     res = {}
     if ins.exists():
-        res["inscripcion"] = cargar_inscripciones(con, leer_csv(ins))
+        res["inscripcion"] = cargar_inscripciones(con, leer_csv(ins), cfg)
     if ent.exists():
         res["entregas"] = cargar_entregas(con, leer_csv(ent), ent.parent, por_id)
     return res

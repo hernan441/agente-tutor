@@ -14,11 +14,22 @@ def _extraer_json(texto: str, abre: str = "["):
     return json.loads(texto[i:j + 1])
 
 
-def llamar(cfg, prompt: str, abre: str = "[") -> tuple[object, dict]:
-    """Devuelve (json_respuesta, uso) — uso: tokens y costo."""
-    cmd = [cfg.claude_bin, "-p", "--agent", "tutor", "--model", cfg.modelo,
-           "--output-format", "json", "--permission-mode", "default", prompt]
-    r = subprocess.run(cmd, capture_output=True, text=True, cwd=cfg.raiz, timeout=1800)
+def _system_prompt(cfg) -> str:
+    texto = (cfg.raiz / ".claude" / "agents" / "tutor.md").read_text(encoding="utf-8")
+    return texto.split("---", 2)[2].strip() if texto.startswith("---") else texto
+
+
+def llamar(cfg, prompt: str, abre: str = "[", con_imagenes: bool = False) -> tuple[object, dict]:
+    """Devuelve (json_respuesta, uso). La IA corre encerrada:
+    --restricted (sin Bash ni web), solo la herramienta Read y solo si hay imágenes que mirar,
+    sin servidores MCP/conectores (ni Gmail ni Drive), y con la carpeta de trabajo en la caché
+    de imágenes: no puede leer la base, los legajos ni la configuración."""
+    cache = cfg.datos / "cache"
+    cache.mkdir(parents=True, exist_ok=True)
+    cmd = [cfg.claude_bin, "-p", "--restricted", "--strict-mcp-config", "--mcp-config", '{"mcpServers":{}}',
+           "--tools", "Read" if con_imagenes else "", "--model", cfg.modelo,
+           "--system-prompt", _system_prompt(cfg), "--output-format", "json", prompt]
+    r = subprocess.run(cmd, capture_output=True, text=True, cwd=cache, timeout=1800)
     if r.returncode:
         raise RuntimeError(f"claude falló: {(r.stderr or r.stdout)[-500:]}")
     salida = json.loads(r.stdout)
@@ -33,9 +44,11 @@ def llamar(cfg, prompt: str, abre: str = "[") -> tuple[object, dict]:
 
 
 def evaluar(cfg, paquetes: list) -> tuple[list, dict]:
+    limpios = [{k: v for k, v in p.items() if not k.startswith("_")} for p in paquetes]
     prompt = ("Evaluá estos paquetes y devolvé solo el arreglo JSON pedido.\n"
-              + json.dumps(paquetes, ensure_ascii=False))
-    res, uso = llamar(cfg, prompt)
+              + json.dumps(limpios, ensure_ascii=False))
+    imagenes = any(p["entrega"]["imagenes_para_mirar"] for p in paquetes)
+    res, uso = llamar(cfg, prompt, con_imagenes=imagenes)
     return (res if isinstance(res, list) else [res]), uso
 
 

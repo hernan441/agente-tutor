@@ -55,7 +55,7 @@ def resumen(con, unidad, faltan: list) -> dict:
                   an.nota_docente, an.revisar, an.revisar_motivo,
                   (SELECT 1 FROM alumnos al WHERE al.mail=e.mail) AS inscripto
            FROM entregas e LEFT JOIN analisis an ON an.entrega_id=e.id
-           WHERE e.unidad=? ORDER BY e.actividad, e.nombre""", (unidad.codigo,)).fetchall()
+           WHERE e.unidad=? AND e.estado='ok' ORDER BY e.actividad, e.nombre""", (unidad.codigo,)).fetchall()
     tabla, ideas, alertas = [], Counter(), []
     quien_idea = {}
     for f in filas:
@@ -67,10 +67,8 @@ def resumen(con, unidad, faltan: list) -> dict:
             quien_idea.setdefault(i, []).append((f["nombre"] or f["mail"]).split()[0])
         if f["senal_ia"]:
             alertas.append(f"{f['nombre']} ({f['actividad']}): señal de copia acrítica — {f['senal_ia_motivo']}")
-        if f["revisar"]:
-            alertas.append(f"{f['nombre']} ({f['actividad']}): revisar la devolución antes de enviarla — {f['revisar_motivo']}")
         if not f["inscripto"]:
-            alertas.append(f"{f['mail']} entregó {f['actividad']} sin estar inscripto")
+            alertas.append(f"{f['mail']} entregó {f['actividad']} sin estar inscripto (liberada por el docente)")
     notas = [f"{f['nombre']} {f['actividad']}: {f['nota_docente']}" for f in filas if f["nota_docente"]]
     return {"unidad": unidad.codigo, "titulo": unidad.titulo, "tabla": tabla,
             "ideas": [(i, n, sorted(set(quien_idea[i]))) for i, n in ideas.most_common()],
@@ -78,10 +76,33 @@ def resumen(con, unidad, faltan: list) -> dict:
             "notas": notas}
 
 
+def resumen_seguridad(con, unidad, uso, cfg, corte_tope) -> dict:
+    rech = [f"{r['mail']}: {r['motivo']}" for r in con.execute(
+        "SELECT mail, motivo FROM rechazos WHERE origen='inscripcion' ORDER BY fecha")]
+    cua = [f"#{r['id']} {r['mail']} {r['actividad']}: {r['motivo_cuarentena']}" for r in con.execute(
+        "SELECT id, mail, actividad, motivo_cuarentena FROM entregas WHERE unidad=? AND estado='cuarentena'",
+        (unidad.codigo,))]
+    banderas = []
+    for r in con.execute("SELECT nombre, actividad, flags FROM entregas WHERE unidad=? AND estado='ok'", (unidad.codigo,)):
+        for f in json.loads(r["flags"] or "[]"):
+            if not f.startswith("sospecha_inyeccion") and f != "liberada_por_docente":
+                banderas.append(f"{r['nombre']} {r['actividad']}: {f}")
+    revisar = [f"{r['nombre']} {r['actividad']}: {r['revisar_motivo']}" for r in con.execute(
+        """SELECT e.nombre, e.actividad, an.revisar_motivo FROM analisis an JOIN entregas e ON e.id=an.entrega_id
+           WHERE e.unidad=? AND an.revisar=1""", (unidad.codigo,))]
+    return {"rechazos": rech, "cuarentena": cua, "banderas": banderas, "revisar": revisar,
+            "gasto": f"US$ {uso.get('costo', 0):.4f} de un tope de US$ {cfg.tope_usd_corrida:.2f} por corrida"
+                     + (" — SE CORTÓ POR TOPE" if corte_tope else "")}
+
+
 def escribir_informe(cfg, unidad, res: dict, sintesis: dict, hoy, uso: dict) -> Path:
     criterios = sorted(unidad.rubrica)
     o = [f"# Informe al docente — {unidad.codigo} — {hoy:%d/%m/%Y}", "",
-         "## En una línea", sintesis.get("en_una_linea", "—"), "",
+         "## En una línea", sintesis.get("en_una_linea", "—"), ""]
+    seg = res.get("seguridad", {})
+    if seg.get("revisar"):
+        o += ["## ⚠ Revisar antes de enviar"] + [f"- {x}" for x in seg["revisar"]] + [""]
+    o += [
          "## Entregas", "| Alumno | Actividad | " + " | ".join(criterios) + " | Señal IA |",
          "|---|---|" + "---|" * len(criterios) + "---|"]
     for t in res["tabla"]:
@@ -93,6 +114,12 @@ def escribir_informe(cfg, unidad, res: dict, sintesis: dict, hoy, uso: dict) -> 
     o += [f"{k}. {i} — {n} ({', '.join(q)})" for k, (i, n, q) in enumerate(res["ideas"][:6], 1)] or ["Ninguna."]
     o += ["", "## Alertas"] + ([f"- {a}" for a in res["alertas"]] or ["- Ninguna."])
     o += ["", "## Sugerencias para la próxima clase"] + [f"- {s}" for s in sintesis.get("sugerencias", [])][:3]
+    if seg:
+        o += ["", "## Seguridad",
+              "**Inscripciones rechazadas:** " + ("; ".join(seg["rechazos"]) or "ninguna"),
+              "", "**En cuarentena (no pasaron por la IA):** " + ("; ".join(seg["cuarentena"]) or "ninguna"),
+              "", "**Otras marcas:** " + ("; ".join(seg["banderas"]) or "ninguna"),
+              "", f"**Gasto de IA:** {seg['gasto']}"]
     o += ["", "## Pendiente de revisión del docente",
           f"Devoluciones y recordatorios: `borradores/{unidad.codigo}/`. Ninguno fue enviado.", "",
           f"_Uso de IA en esta corrida: {uso.get('llamadas', 0)} llamadas, {uso.get('entrada', 0):,} tokens de entrada, "

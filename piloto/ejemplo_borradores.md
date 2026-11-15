@@ -3,18 +3,80 @@ Salida de `./tutor.sh --piloto --hoy 2026-11-20 procesar BIO6-ALIM`. Ninguno se 
 
 ---
 
+**Para:** bruno.ficticio@ejemplo.edu  
+**Asunto:** Biotecnología — ¿Te doy una mano con A1?
+
+Hola Bruno:
+
+Vi que todavía no subiste la actividad A1 (Mi alimento: qué sé, qué supongo, qué ignoro). ¿Te trabaste en algo?
+Si querés, empezá solo por la primera parte de la consigna y lo seguimos desde ahí. Podés responder escribiendo, con una foto o con un audio en el formulario.
+
+Prof. Hernán Pinciroli
+
+---
+
+**Para:** bruno.ficticio@ejemplo.edu  
+**Asunto:** [REVISAR] Biotecnología — Devolución de A4: Tu entrega de la auditoría
+
+Hola Bruno:
+
+Aclarar — Entendiste que la IA mencionó a la FDA y que había algo para revisar. ¿Es así?
+
+Valorar — Tu entrega dice «La IA dijo cosas de la FDA», y ese es el punto de partida correcto para la auditoría.
+
+Preguntar — ¿Qué organismo controla los alimentos en Argentina y qué hace con ellos?
+
+Sugerir — Reescribí la respuesta de la IA con tus palabras, marcá un error y una omisión, y citá una fuente de clase.
+
+Por ahora estás en Inicial en C1, C2 y C3; para subir a En desarrollo te falta reescribir la respuesta de la IA con tus palabras y marcar al menos un error.
+
+Prof. Hernán Pinciroli
+
+---
+
+**Para:** camila.ficticia@ejemplo.edu  
+**Asunto:** Biotecnología — ¿Te doy una mano con A1?
+
+Hola Camila:
+
+Vi que todavía no subiste la actividad A1 (Mi alimento: qué sé, qué supongo, qué ignoro). ¿Te trabaste en algo?
+Si querés, empezá solo por la primera parte de la consigna y lo seguimos desde ahí. Podés responder escribiendo, con una foto o con un audio en el formulario.
+
+Prof. Hernán Pinciroli
+
+---
+
+**Para:** camila.ficticia@ejemplo.edu  
+**Asunto:** [REVISAR] Biotecnología — Devolución de A4: Tu PDF de la auditoría
+
+Hola Camila:
+
+Aclarar — Entendiste que la FDA es de Estados Unidos y que en Argentina interviene el SENASA. ¿Es así?
+
+Valorar — Marcaste bien una omisión concreta: «No dijo que el evento se aprueba caso por caso».
+
+Preguntar — Según la clase 3, ¿qué organismo evalúa si un evento es seguro para comer?
+
+Sugerir — Explicá con tus palabras, citando la clase 3, por qué la FDA no corresponde en Argentina.
+
+Por ahora estás en En desarrollo en C1 a C4; para subir a Logrado te falta usar inocuidad y trazabilidad, y explicar por qué la IA se equivocó, no solo qué omitió.
+
+Prof. Hernán Pinciroli
+
+---
+
 **Para:** joaquin.ficticio@ejemplo.edu  
-**Asunto:** Biotecnología — Devolución de A1: Tus fideos: falta completar
+**Asunto:** Biotecnología — Devolución de A1: Tu entrega de fideos, para completar
 
 Hola Joaquín:
 
-Aclarar — Veo que elegiste los fideos y adjuntaste la etiqueta, pero todavía no contaste qué sabés ni qué suponés. ¿Es así?
+Aclarar — Entiendo que elegiste fideos y adjuntaste la foto de la etiqueta, pero no llegaste a contar qué sabés ni qué suponés. ¿Querés contarme?
 
-Valorar — Adjuntaste la etiqueta, que era el punto de partida: 'Elaborado en Buenos Aires, Argentina'.
+Valorar — Adjuntaste la foto de la etiqueta, y ahí aparece 'Ingredientes: semola de trigo candeal', que es un buen punto de partida.
 
-Preguntar — Mirando la etiqueta, ¿qué dato te dice algo seguro sobre el origen de los fideos y qué parte tendrías que suponer?
+Preguntar — ¿De qué cultivo sale la semola de esa lista y qué sabés de ese cultivo en Argentina?
 
-Sugerir — Escribí tres renglones: qué sabés, qué suponés y qué no sabés de los fideos.
+Sugerir — Completá la entrega: escribí qué sabés, qué suponés y qué no sabés de los fideos, y pegá la respuesta de la IA.
 
 Prof. Hernán Pinciroli
 
@@ -33,161 +95,144 @@ Prof. Hernán Pinciroli
 ---
 
 **Para:** lucia.ficticia@ejemplo.edu  
-**Asunto:** Biotecnología — Devolución de A1: Lo que sabés y lo que no
+**Asunto:** Biotecnología — Devolución de A1: Tu diferencia entre saber y suponer
 
 Hola Lucía:
 
-Aclarar — Entendí que sabés el RNPA y que la hace una empresa de Córdoba, que suponés que el azúcar viene de caña y que no sabés quién revisa el cacao. ¿Es así?
+Aclarar — Entendiste que la etiqueta te da datos concretos, como el RNPA y el elaborador, y que el origen del azúcar es una suposición. ¿Es así?
 
-Valorar — Separaste bien lo que suponés: 'Supongo que el azúcar puede venir de caña.'
+Valorar — Escribiste 'Sé que tiene RNPA y que la hace una empresa de Córdoba', y eso es un dato real de la etiqueta.
 
-Preguntar — ¿Qué dato de la etiqueta te podría llevar a una fuente oficial que diga quién controla ese producto?
+Preguntar — ¿Dónde podrías averiguar si el cacao o el azúcar de tu leche chocolatada son transgénicos y quién lo controla?
 
-Sugerir — Buscá en una fuente oficial argentina qué organismo registra el número RNPA de tu etiqueta y anotá qué revisa.
+Sugerir — Leé la lista completa de ingredientes de tu leche y anotá cuáles podrían venir de maíz o soja.
 
 Prof. Hernán Pinciroli
 
 ---
 
 **Para:** lucia.ficticia@ejemplo.edu  
-**Asunto:** Biotecnología — Devolución de A4: Tu auditoría de la leche chocolatada
+**Asunto:** Biotecnología — Devolución de A4: Tu reescritura sobre la leche
 
 Hola Lucía:
 
-Aclarar — Entendiste que la IA se equivocó al poner a la FDA como controladora, y que en Argentina quien evalúa la seguridad de un alimento transgénico es el SENASA. ¿Es así?
+Aclarar — Entendiste que la FDA no regula en Argentina y que la IA se equivocó con el jarabe de maíz. ¿Es así?
 
-Valorar — En la reescritura escribiste « En Argentina lo controla el SENASA », y en el audio explicaste por qué la FDA no corresponde.
+Valorar — Me sirve que escribas «En Argentina lo controla el SENASA y tiene RNPA»: es un dato local que la IA no dio.
 
-Preguntar — Según la clase, ¿qué control le hace el SENASA a un alimento y en qué se diferencia del que hace el RNPA?
+Preguntar — Cuando decís «cultivos modificados», ¿qué es lo que se aprueba: el cultivo en general o algo más específico? Buscalo en tus apuntes de clase.
 
-Sugerir — Antes de la próxima clase, buscá en una fuente oficial qué organismo registra el RNPA y qué revisa, y anotá la fuente.
+Sugerir — Reescribí la frase de la leche usando el término de clase para la modificación genética aprobada y anotá qué organismo la evalúa en cada etapa.
 
-Por ahora estás en En desarrollo en C1, C2 y C3; para subir a Logrado te falta citar fuentes concretas de la clase y explicar por escrito por qué la IA se equivocó en la FDA.
-
-Prof. Hernán Pinciroli
-
----
-
-**Para:** martina.ficticia@ejemplo.edu  
-**Asunto:** Biotecnología — Devolución de A1: Aceite de girasol: saber y suponer
-
-Hola Martina:
-
-Aclarar — Entendí que sabés el RNE, el RNPA y que es de Buenos Aires, y que suponés que el girasol no es transgénico porque no viste eventos aprobados. ¿Es así?
-
-Valorar — Marcaste como suposición lo del girasol: 'no estoy segura'. Eso separa bien saber de suponer.
-
-Preguntar — ¿Qué tendría que mostrar una fuente para que puedas afirmar, y no suponer, que ese aceite no es transgénico?
-
-Sugerir — Buscá en un sitio oficial argentino qué organismo controla el establecimiento de tu RNE y anotá su nombre y su función.
+Por ahora estás en En desarrollo en C1, C2 y C3; para subir a Logrado te falta usar el término de clase con precisión y citar fuentes concretas en vez de «la clase».
 
 Prof. Hernán Pinciroli
 
 ---
 
 **Para:** martina.ficticia@ejemplo.edu  
-**Asunto:** Biotecnología — Devolución de A4: Tu auditoría del girasol
+**Asunto:** Biotecnología — Devolución de A1: Tu distinción entre saber y suponer
 
 Hola Martina:
 
-Aclarar — Entendiste que la IA respondió en general y no por Argentina, y que le faltaron el evento, los organismos de aprobación y el control de la fábrica. ¿Es así?
+Aclarar — Entendiste que sabés algunos datos de la etiqueta, pero que el girasol no sea transgénico es una suposición. ¿Es así?
 
-Valorar — Relacionaste el evento con el aceite refinado: « casi no queda ADN ni proteina del evento », y lo fundamentaste con la clase 3.
+Valorar — 'Supongo que el girasol no es transgénico porque no vi eventos aprobados de girasol en el cuaderno, pero no estoy segura' separa bien lo que sabés de lo que supones.
 
-Preguntar — Según la clase 3, ¿qué pasa en el proceso de refinado del aceite que hace que casi no quede ADN ni proteína del evento?
+Preguntar — ¿Dónde podrías buscar qué organismo argentino revisa la seguridad de un aceite como el tuyo?
 
-Sugerir — Buscá en un sitio oficial de ANMAT o de tu provincia qué controla el RNE y el RNPA, y anotá su función con la fuente.
-
-Por ahora estás en Logrado en C1, C2 y C3; para subir a Destacado en C1 te falta usar el término 'trazabilidad' y relacionarlo con el control de la fábrica.
+Sugerir — Buscá qué organismo registra el RNPA que aparece en tu aceite y anotá qué hace.
 
 Prof. Hernán Pinciroli
 
 ---
 
-**Para:** nicolas.noinscripto@ejemplo.edu  
-**Asunto:** Biotecnología — Devolución de A1: Yerba: lo que sabés y lo que no
+**Para:** martina.ficticia@ejemplo.edu  
+**Asunto:** Biotecnología — Devolución de A4: Tu reescritura del aceite
 
-Hola Nicolás:
+Hola Martina:
 
-Aclarar — Entendí que sabés que la yerba es de Misiones y que suponés que no es transgénica, pero no sabés quién la controla. ¿Es así?
+Aclarar — Entendiste que la IA omitió los datos argentinos porque le preguntaste en general, y que el aceite refinado casi no conserva ADN del evento. ¿Es así?
 
-Valorar — Separaste lo que sabés de lo que suponés: 'Sé que es de Misiones.'
+Valorar — Me sirve que expliques «le pregunté en general y no por Argentina»: es una hipótesis concreta sobre por qué la IA omitió los datos locales.
 
-Preguntar — ¿Qué quiere decir, para vos, que un alimento sea transgénico?
+Preguntar — ¿Por qué es importante que cada evento se apruebe caso por caso y no por tipo de cultivo?
 
-Sugerir — Buscá en una fuente oficial argentina quién controla la yerba mate y anotá el nombre del organismo y qué revisa.
+Sugerir — Buscá el caso HB4 en el cuaderno de regulación y anotá en qué instancia de aprobación está.
 
-Prof. Hernán Pinciroli
-
----
-
-**Para:** sofia.ficticia@ejemplo.edu  
-**Asunto:** Biotecnología — Devolución de A1: Polenta y lo que te falta
-
-Hola Sofía:
-
-Aclarar — Entendí que sabés del maíz por tu abuelo y que suponés que el maíz de acá puede ser transgénico, pero no sabés si el proceso lo cambia. ¿Es así?
-
-Valorar — Ubicaste con precisión lo que te falta: 'Me falta lo de la aprobación.'
-
-Preguntar — ¿Qué diferencia hay, para vos, entre que un maíz sea transgénico y que sea seguro para comer?
-
-Sugerir — Averiguá en una fuente oficial argentina cómo se aprueba un maíz modificado y explicalo en dos renglones.
+Por ahora estás en Logrado en C1 y C2 y en Destacado en C3 y C4; para subir a Destacado en C1 te falta usar la palabra trazabilidad y relacionarla con el registro del producto.
 
 Prof. Hernán Pinciroli
 
 ---
 
 **Para:** sofia.ficticia@ejemplo.edu  
-**Asunto:** Biotecnología — Devolución de A4: Tu auditoría de la polenta
+**Asunto:** Biotecnología — Devolución de A1: Tu mirada sobre el maíz de la polenta
 
 Hola Sofía:
 
-Aclarar — Entendiste que la IA omitió que cada evento se aprueba por separado, y que la polenta puede venir de eventos aprobados por CONABIA y SENASA. ¿Es así?
+Aclarar — Entendiste que sabés bastante del maíz, pero no sabés si la aprobación o el proceso de molienda y cocción cambian algo. ¿Es así?
 
-Valorar — Notaste que la IA « No dijo que cada evento se aprueba aparte », y lo señalaste con precisión.
+Valorar — 'Supongo que el maíz puede ser transgénico porque en Argentina se siembra mucho maíz Bt' justifica la suposición con un dato real.
 
-Preguntar — Según la clase, ¿qué es un evento y qué es un agroquímico como el glifosato? ¿En qué se diferencian?
+Preguntar — Cuando el maíz se muele y se cocina, ¿qué creés que pasa con el material genético?
 
-Sugerir — Averiguá en una fuente oficial cómo se aprueba un maíz modificado y explicalo en dos renglones, citando la fuente.
+Sugerir — Buscá en el cuaderno o preguntá en clase qué significa la aprobación de un maíz transgénico, y escribilo en una frase.
 
-Por ahora estás en En desarrollo en C1, C2 y C3; para subir a Logrado te falta citar una fuente concreta de la clase y separar el glifosato del concepto de transgénico.
+Prof. Hernán Pinciroli
+
+---
+
+**Para:** sofia.ficticia@ejemplo.edu  
+**Asunto:** Biotecnología — Devolución de A4: Tu esquema y la polenta
+
+Hola Sofía:
+
+Aclarar — Entendiste que el maíz de la polenta puede venir de eventos aprobados y que la IA no aclaró que cada evento se aprueba aparte. ¿Es así?
+
+Valorar — Está bien que marcaste «No dijo que cada evento se aprueba aparte», porque ahí la IA omitió un dato clave.
+
+Preguntar — ¿Qué dice la clase sobre si el glifosato forma parte de la modificación genética o es otra cosa?
+
+Sugerir — Anotá en una frase qué significa que un evento de maíz esté aprobado, citando la clase.
+
+Por ahora estás en En desarrollo en C1, C2 y C3; para subir a Logrado te falta separar transgénico de glifosato y citar fuentes concretas de clase.
 
 Prof. Hernán Pinciroli
 
 ---
 
 **Para:** tomas.ficticio@ejemplo.edu  
-**Asunto:** Biotecnología — Devolución de A1: Sobre tus galletitas
+**Asunto:** Biotecnología — Devolución de A1: Sobre tus galletitas y lo que supones
 
 Hola Tomás:
 
-Aclarar — Entendí que para vos lo transgénico tiene químicos que hacen mal, y que por eso conviene comer orgánico. ¿Es así?
+Aclarar — Entendiste que, para vos, los transgénicos son químicos que hacen mal y que nadie controla eso en Argentina. ¿Es así?
 
-Valorar — Pegaste la respuesta de la IA tal cual, como pedía la consigna: 'La seguridad es evaluada por autoridades sanitarias.'
+Valorar — Hiciste la consigna: pegaste la respuesta de la IA y señalaste ingredientes concretos, 'harina de trigo y aceite de soja'.
 
-Preguntar — Cuando decís que hacen mal, ¿de dónde sale esa afirmación: la leíste, te la dijeron o la suponés?
+Preguntar — ¿Qué diferencia hay, para vos, entre un ingrediente transgénico y un producto con químicos agregados?
 
-Sugerir — Buscá en una fuente oficial o en tus apuntes qué significa transgénico y copiá la definición con tus palabras en un párrafo.
+Sugerir — Volvé a la etiqueta de tus galletitas, anotá el RNPA y el elaborador, y separá lo que sabés de lo que suponés.
 
 Prof. Hernán Pinciroli
 
 ---
 
 **Para:** tomas.ficticio@ejemplo.edu  
-**Asunto:** Biotecnología — Devolución de A4: Tu auditoría de la respuesta
+**Asunto:** Biotecnología — Devolución de A4: Sobre tu párrafo final
 
 Hola Tomás:
 
-Aclarar — Entendiste que en Argentina participan CONABIA, SENASA y la Dirección de Mercados en la evaluación de los OGM. ¿Es así?
+Aclarar — Entendiste que OGM es un organismo con material genético alterado y que en Argentina intervienen CONABIA, SENASA y la Dirección Nacional de Mercados. ¿Es así?
 
-Valorar — Dijiste qué parte te parece correcta: « La respuesta de la IA es correcta en general ». Eso permite revisarlo punto por punto.
+Valorar — Nombraste a CONABIA, SENASA y la Dirección Nacional de Mercados, que son los organismos que vimos en clase.
 
-Preguntar — Según la clase, ¿qué se aprueba cuando se habla de un OGM: el transgénico en general o algo más concreto?
+Preguntar — Contame con tus palabras qué evalúa cada organismo que mencionaste, en particular qué significa «garantiza la inocuidad».
 
-Sugerir — Antes de la próxima clase, explicá con tus palabras y sin mirar el texto qué hace la Dirección de Mercados, y citá la clase o el cuaderno donde lo viste.
+Sugerir — Reescribí el párrafo final con tus palabras y citá una fuente concreta de clase.
 
-Por ahora estás en Inicial en C2 y C3; para subir a En desarrollo te falta citar una fuente concreta de la clase y señalar al menos un error u omisión de la IA.
+Por ahora estás en Inicial en C2 y C3; para subir a En desarrollo te falta citar fuentes concretas de clase y marcar al menos un error u omisión de la IA.
 
 Prof. Hernán Pinciroli
 

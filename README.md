@@ -14,6 +14,7 @@ Proyecto Integrador Final — Diplomatura en IA para la Enseñanza y la Innovaci
 3. **Nunca da la respuesta.** La devolución sigue la escalera de la retroalimentación (aclarar → valorar → preguntar → sugerir) y un control automático marca cualquier devolución que copie la respuesta esperada.
 4. **Nada sale sin el docente.** El sistema no envía mails: deja borradores que el docente revisa y manda.
 5. **Datos mínimos.** Inscripción con nombre, apellido, mail y curso. Los datos de alumnos nunca van al repositorio.
+6. **Seguro por diseño.** Solo cuentas del colegio, límites contra la inundación, tope de gasto y defensa en capas contra prompt injection. Ver [SECURITY.md](SECURITY.md).
 
 ## Cómo funciona
 
@@ -55,7 +56,8 @@ cp config.example.toml config.toml        # completar
 ./tutor.sh sync                           # trae inscripciones y entregas
 ./tutor.sh procesar BIO6-ALIM             # circuito completo → informe + .eml
 ./tutor.sh procesar BIO6-ALIM --subir     # además sube los borradores a la casilla (no envía)
-./tutor.sh estado                         # inscriptos, entregas, sin inscripción
+./tutor.sh estado                         # inscriptos, rechazos, cuarentena
+./tutor.sh liberar 12                     # saca la entrega #12 de cuarentena
 ```
 
 Requiere el CLI de Claude Code (`claude`) con el agente `.claude/agents/tutor.md`. Para audios,
@@ -66,7 +68,9 @@ un python con `faster-whisper` (`audio_python` en `config.toml`).
 ```bash
 ./tutor.sh --piloto --hoy 2026-11-20 procesar BIO6-ALIM
 ```
-Usa `piloto/`: 6 alumnos ficticios inscriptos, 10 entregas (una de alguien sin inscripción),
+Usa `piloto/`: 8 alumnos ficticios inscriptos y 2 inscripciones rechazadas (dominio ajeno y alias),
+13 entregas (una sin inscripción y un reenvío duplicado, que quedan en cuarentena; un intento de
+manipular la nota por texto y otro con texto oculto en un PDF, que quedan en [REVISAR]),
 un PDF, una foto de etiqueta, un esquema dibujado y un audio. Las salidas quedan en `datos_piloto/`.
 
 ### Tests
