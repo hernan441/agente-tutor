@@ -66,8 +66,8 @@ Solo cuando una foto no tiene texto legible (un dibujo, letra manuscrita) se le 
 ## Uso
 
 ```bash
-python3 -m venv venv && venv/bin/pip install pymupdf pillow pillow-heif rapidocr-onnxruntime pytest
-cp config.example.toml config.toml        # completar
+python3 -m venv venv && venv/bin/pip install -r requirements.txt
+./tutor.sh configurar                     # primera vez: tu mail del colegio, dominio, IMAP
 ./tutor.sh unidades                       # unidades cargadas
 ./tutor.sh sync                           # trae inscripciones y entregas
 ./tutor.sh procesar BIO6-ALIM             # circuito completo → informe + .eml
@@ -78,6 +78,9 @@ cp config.example.toml config.toml        # completar
 ./tutor.sh evaluar-agente                 # coincidencia con los niveles del docente (evals/casos.csv)
 ./tutor.sh purgar --ciclo 2026 --anonimizar --confirmar   # retención de datos
 ```
+
+`configurar` guarda tus datos en `config.toml` y `.env`, que están en `.gitignore`: tu mail nunca
+llega al repositorio (antes de escribir lo verifica, y un test falla si aparece un mail real en un archivo versionado).
 
 Requiere el CLI de Claude Code (`claude`); el prompt del agente está en `.claude/agents/tutor.md`. Para audios,
 un python con `faster-whisper` (`audio_python` en `config.toml`).
@@ -115,6 +118,7 @@ Ver `formulario.md`: Inscripción (nombre, apellido, mail del colegio y curso) y
 ```
 tutor/
   cli.py            comandos (./tutor.sh …)
+  configurar.py     asistente de primera vez (mail, dominio, IMAP → config.toml)
   config.py         configuración (config.toml)
   db.py             base SQLite
   sync.py           formularios → base (rclone, solo lectura)
@@ -137,6 +141,6 @@ unidades/           una carpeta por unidad: unidad.md + clase.md
 plantillas/         plantilla de unidad y formato de devolución
 evals/              casos para que el docente corrija + resultados
 piloto/             datos ficticios y ejemplos de salida
-tests/              63 tests (sin IA)
+tests/              73 tests (sin IA)
 SECURITY.md         amenazas y defensas
 ```

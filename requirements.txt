@@ -1,0 +1,9 @@
+# Lectura de adjuntos (sin IA)
+pymupdf
+pillow
+pillow-heif
+rapidocr-onnxruntime
+# Tests
+pytest
+# Opcional, para audios (puede ir en otro venv; ver audio_python en config.toml):
+# faster-whisper

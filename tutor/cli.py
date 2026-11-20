@@ -5,6 +5,7 @@
   ./tutor pendientes UNIDAD        quién no entregó (sin IA)
   ./tutor estado                   inscriptos por curso, entregas, sin inscripción
   ./tutor unidades                 lista las unidades cargadas
+  ./tutor configurar               primera vez: tu mail y datos (quedan fuera de git)
 
 Opciones: --piloto (datos de prueba, sin Google ni IMAP) · --hoy AAAA-MM-DD · --sin-ia
 """
@@ -177,6 +178,7 @@ def main(argv=None):
     ap.add_argument("--piloto", action="store_true")
     ap.add_argument("--hoy", type=lambda s: datetime.fromisoformat(s), default=datetime.now())
     sub = ap.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("configurar", help="primera vez: mail de la cuenta, dominio del colegio, IMAP (fuera de git)")
     sub.add_parser("sync")
     sub.add_parser("estado")
     sub.add_parser("unidades")
@@ -194,6 +196,10 @@ def main(argv=None):
     p.add_argument("--ciclo", type=int, required=True); p.add_argument("--anonimizar", action="store_true")
     p.add_argument("--confirmar", action="store_true")
     a = ap.parse_args(argv)
+    if a.cmd == "configurar":
+        from . import configurar
+        configurar.correr(config.RAIZ)
+        return
     cfg = config.cargar(piloto=a.piloto)
     _env(cfg)
     con = db.conectar(cfg.db)
