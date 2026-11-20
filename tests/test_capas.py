@@ -44,7 +44,7 @@ def test_rag_no_usa_unidad_md(unidad):
 
 def test_paquete_trae_material(cfg, con, unidad):
     sync.sincronizar(cfg, con)
-    fila = con.execute("SELECT * FROM entregas WHERE nombre='Lucía' AND actividad='A4'").fetchone()
+    fila = con.execute("SELECT * FROM entregas WHERE nombre LIKE 'Lucía%' AND actividad='A4'").fetchone()
     p = lote.paquete(con, unidad, fila)
     assert p["material_de_clase"] and "seccion" in p["material_de_clase"][0]
     assert list(p)[:4] == ["AVISO", "actividad", "rubrica", "solo_para_vos"]  # lo fijo primero
@@ -186,4 +186,4 @@ def test_purgar_anonimiza(cfg, con, capsys):
     cli.main(["--piloto", "purgar", "--ciclo", "2026", "--anonimizar", "--confirmar"])
     c2 = db.conectar(cfg.db)
     assert c2.execute("SELECT COUNT(*) FROM entregas WHERE mail LIKE '%ejemplo.edu'").fetchone()[0] == 0
-    assert c2.execute("SELECT COUNT(*) FROM entregas").fetchone()[0] == 14
+    assert c2.execute("SELECT COUNT(*) FROM entregas").fetchone()[0] == 15

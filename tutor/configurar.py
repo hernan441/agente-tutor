@@ -10,6 +10,7 @@ import os
 import re
 import subprocess
 import tomllib
+from datetime import date, datetime
 from pathlib import Path
 
 MAIL_RE = re.compile(r"^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+[A-Za-z]{2,}$")
@@ -94,7 +95,7 @@ def correr(raiz: Path):
     print("Configuración del agente tutor. Tus datos quedan solo en esta compu (config.toml y .env, fuera de git).\n")
     mail = ""
     while not mail_valido(mail):
-        mail = _preguntar("Mail de tu cuenta (la del colegio, con la que vas a crear los formularios)")
+        mail = _preguntar("Mail de tu cuenta (la del colegio: ahí llegan inscripciones y trabajos)")
     dom = dominio_de(mail)
     if dom in PUBLICOS:
         print(f"  Ojo: {dom} es un mail personal. Los alumnos tienen que inscribirse con el dominio del colegio.")
@@ -104,15 +105,23 @@ def correr(raiz: Path):
     dominios = [d.strip().lower().lstrip("@") for d in dominios.split(",") if d.strip()]
     imap = _preguntar("Servidor IMAP de tu correo", imap_de(mail))
     firma = _preguntar("Firma de las devoluciones", "Cátedra")
-    remoto = _preguntar("Nombre del remoto de rclone", "catedra")
+    desde = ""
+    while not desde:
+        d = _preguntar("Leer mails desde (dd/mm/aaaa; los anteriores no se miran)", date.today().strftime("%d/%m/%Y"))
+        try:
+            desde = datetime.strptime(d, "%d/%m/%Y").date().isoformat()
+        except ValueError:
+            print("  Formato: dd/mm/aaaa")
 
     plantilla = (raiz / "config.example.toml").read_text(encoding="utf-8")
     texto = generar_toml(plantilla, {"cuenta": mail.strip(), "dominios_permitidos": dominios,
-                                     "imap_host": imap, "firma_remitente": firma, "rclone_remoto": remoto})
+                                     "imap_host": imap, "firma_remitente": firma, "desde": desde})
     _escribir_privado(destino, texto)
     print(f"\n✔ config.toml guardado (solo lo puede leer tu usuario).")
 
-    clave = getpass.getpass("Contraseña de aplicación del correo, para subir borradores (Enter para omitir): ").strip()
+    print("\nPara LEER la casilla y dejar borradores hace falta una contraseña de aplicación de Google")
+    print("(Cuenta de Google → Seguridad → Verificación en 2 pasos → Contraseñas de aplicación).")
+    clave = getpass.getpass("Contraseña de aplicación (Enter para cargarla después): ").strip().replace(" ", "")
     if clave:
         env = raiz / ".env"
         lineas = [l for l in (env.read_text().splitlines() if env.exists() else []) if not l.startswith("TUTOR_IMAP_PASS=")]
@@ -120,9 +129,9 @@ def correr(raiz: Path):
         _escribir_privado(env, "\n".join(lineas) + "\n")
         print("✔ .env guardado.")
 
-    print(f"""
+    print("""
 Siguientes pasos:
-  1. Crear los dos formularios con {mail.strip()} (ver formulario.md).
-  2. Autorizar el Drive en modo solo lectura:
-       rclone config create {remoto} drive scope=drive.readonly
-  3. Probar: ./tutor.sh sync && ./tutor.sh estado""")
+  1. ./tutor.sh inscripcion-borrador --subir   → mandá ese borrador a tus alumnos.
+  2. ./tutor.sh sync && ./tutor.sh estado      → ver quiénes se inscribieron.
+  3. ./tutor.sh asignar <UNIDAD> <A1> --curso 6A --subir   → mandá el trabajo.
+  4. ./tutor.sh procesar <UNIDAD>               → devoluciones con nota como borradores.""")

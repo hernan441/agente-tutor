@@ -13,24 +13,25 @@ RAIZ = Path(__file__).resolve().parent.parent
 
 
 def test_dominio_e_imap():
-    assert configurar.dominio_de(" Juan.Perez@Colegio.edu.ar ") == "colegio.edu.ar"
-    assert configurar.imap_de("x@colegio.edu.ar") == "imap.gmail.com"   # Workspace por defecto
-    assert configurar.imap_de("x@outlook.com") == "outlook.office365.com"
+    assert configurar.dominio_de(" Juan.Perez@Colegio.Ejemplo.edu ") == "colegio.ejemplo.edu"
+    assert configurar.imap_de("x@colegio.ejemplo.edu") == "imap.gmail.com"   # Workspace por defecto
+    assert configurar.imap_de("x@" + "outlook.com") == "outlook.office365.com"
 
 
-@pytest.mark.parametrize("mail,ok", [("a@colegio.edu.ar", True), ("a@b", False), ("sin-arroba", False), ("a b@c.com", False)])
+@pytest.mark.parametrize("mail,ok", [("a@colegio.ejemplo.edu", True), ("a@b", False), ("sin-arroba", False), ("a b@c.example", False)])
 def test_mail_valido(mail, ok):
     assert configurar.mail_valido(mail) is ok
 
 
 def test_generar_toml_desde_la_plantilla():
     plantilla = (RAIZ / "config.example.toml").read_text(encoding="utf-8")
-    texto = configurar.generar_toml(plantilla, {"cuenta": "doc@colegio.edu.ar", "dominios_permitidos": ["colegio.edu.ar", "alumnos.colegio.edu.ar"],
-                                                "imap_host": "imap.gmail.com", "firma_remitente": 'Prof. "H"', "rclone_remoto": "catedra"})
+    texto = configurar.generar_toml(plantilla, {"cuenta": "doc@colegio.ejemplo.edu", "dominios_permitidos": ["colegio.edu.ar", "alumnos.colegio.edu.ar"],
+                                                "imap_host": "imap.gmail.com", "firma_remitente": 'Prof. "H"', "desde": "2027-03-01"})
     d = tomllib.loads(texto)
-    assert d["correo"]["cuenta"] == "doc@colegio.edu.ar"
+    assert d["correo"]["cuenta"] == "doc@colegio.ejemplo.edu"
     assert d["correo"]["firma_remitente"] == 'Prof. "H"'
     assert d["seguridad"]["dominios_permitidos"] == ["colegio.edu.ar", "alumnos.colegio.edu.ar"]
+    assert d["correo"]["desde"] == "2027-03-01"
     assert d["seguridad"]["max_mb"] == 15          # el resto de la plantilla queda igual
 
 

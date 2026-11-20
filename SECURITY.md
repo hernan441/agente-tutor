@@ -8,8 +8,13 @@ Todas las defensas son **por script**; ninguna depende de que la IA "se porte bi
 - **La IA no puede actuar.** Corre en modo restringido: sin terminal, sin web, sin conectores
   (ni Gmail ni Drive), y con acceso de lectura solo a la carpeta de imágenes a evaluar. No ve la
   base de datos, los legajos ni la configuración. Solo devuelve JSON, que un script valida.
-- **Nada sale sin el docente.** El sistema no envía mails: deja borradores. El módulo de correo
-  no usa SMTP (hay un test que lo verifica).
+- **Nada sale sin el docente.** El sistema no envía mails: deja borradores. Ni el módulo de correo
+  ni el que lee la casilla usan SMTP (hay tests que lo verifican).
+- **La casilla se lee en solo lectura.** `buzon.py` abre la carpeta en modo `readonly` y baja los
+  mails con `BODY.PEEK`: no marca nada como leído, no mueve ni borra (un test verifica que el código
+  no tenga `STORE`, `EXPUNGE`, `\Seen`, copiar ni mover). Antes de bajar un mail mira solo remitente y
+  asunto: si no es del dominio del colegio ni trae un código de actividad, ni lo baja. De los mails
+  ajenos solo queda un hash del Message-ID, para no volver a mirarlos.
 - **Datos mínimos y fuera del repositorio.** Inscripción con nombre, apellido, mail y curso.
   La base y los archivos de alumnos se crean con permisos de solo dueño y están en `.gitignore`.
 
@@ -19,14 +24,15 @@ Todas las defensas son **por script**; ninguna depende de que la IA "se porte bi
 | Alguien ajeno al colegio se inscribe | Solo se aceptan mails de `dominios_permitidos`; opcionalmente, además, tienen que figurar en la `nomina` oficial. Los rechazos quedan registrados. |
 | Alias para inscribirse varias veces (`ana+1@…`) | Se rechazan los alias con "+". |
 | Entregas de alguien no inscripto | Van a **cuarentena**: no llegan a la IA. El docente puede liberarlas (`./tutor.sh liberar ID`). |
+| Mail de inscripción incompleto o de un inscripto que no corresponde a ninguna actividad | No se adivina: queda en "Mails a revisar" del informe y en `./tutor.sh estado`. |
 
 ## 2. Inundación y abuso
 | Amenaza | Defensa |
 |---|---|
-| Mails masivos a la casilla del profesor | El sistema **nunca lee esa casilla**: solo entra lo que llega por los formularios. |
-| Cientos de entregas para saturar o gastar | Máx. 3 entregas por actividad y 10 por día por alumno; detección de ráfagas; máx. 60 entregas por corrida; **tope de gasto en US$ por corrida** (se corta antes de superarlo). |
+| Mails masivos a la casilla del profesor | Solo se procesan mails del dominio del colegio que sean inscripciones o de alumnos inscriptos; el resto se ignora sin bajarlo. Solo se leen mails posteriores a `desde`. |
+| Cientos de entregas para saturar o gastar | Máx. 6 versiones por actividad (`max_iteraciones`) y 10 por día por alumno; detección de ráfagas; máx. 60 entregas por corrida; **tope de gasto en US$ por corrida** (se corta antes de superarlo). |
 | Reenvíos idénticos | Duplicados del mismo alumno a cuarentena; textos idénticos entre alumnos se marcan. |
-| Archivos enormes o peligrosos | Lista blanca de tipos, máx. 5 archivos, 15 MB y 10 min de audio por archivo. |
+| Archivos enormes o peligrosos | Nombres de archivo saneados (sin rutas), lista blanca de tipos, máx. 5 archivos, 15 MB y 10 min de audio por archivo. |
 | Textos gigantes | Respuesta recortada a 6000 caracteres y marcada. |
 
 Todos los límites se ajustan en `config.toml` (`[seguridad]`).

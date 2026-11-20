@@ -1,13 +1,15 @@
 """Línea de comandos del tutor.
 
-  ./tutor sync                     trae inscripciones y entregas (rclone o piloto)
-  ./tutor procesar UNIDAD          todo el circuito: adjuntos → IA → borradores → informe
+  ./tutor configurar               primera vez: tu mail y datos (quedan fuera de git)
+  ./tutor inscripcion-borrador     borrador del mail de inscripción de principio de año
+  ./tutor asignar UNIDAD ACT --curso 6A   borrador del mail del trabajo para el curso
+  ./tutor sync                     lee la casilla (solo lectura): inscripciones y entregas
+  ./tutor procesar UNIDAD          todo el circuito: mails → adjuntos → IA → nota → borradores → informe
   ./tutor pendientes UNIDAD        quién no entregó (sin IA)
   ./tutor estado                   inscriptos por curso, entregas, sin inscripción
   ./tutor unidades                 lista las unidades cargadas
-  ./tutor configurar               primera vez: tu mail y datos (quedan fuera de git)
 
-Opciones: --piloto (datos de prueba, sin Google ni IMAP) · --hoy AAAA-MM-DD · --sin-ia
+Opciones: --piloto (mails de prueba de piloto/buzon, sin IMAP) · --hoy AAAA-MM-DD · --sin-ia
 """
 
 import argparse
@@ -15,7 +17,7 @@ import json
 import os
 from datetime import datetime
 
-from . import adjuntos, config, correo, db, evals, ia, informe, lote, motor, observabilidad, pendientes, seguridad, sync, unidades
+from . import adjuntos, config, correo, db, evals, ia, informe, lote, motor, observabilidad, pendientes, planilla, seguridad, sync, unidades
 
 
 def _env(cfg):
@@ -46,11 +48,42 @@ def cmd_estado(cfg, con, a):
         print("Rechazos:")
         for r in rech:
             print(f"  {r['mail']} ({r['origen']}): {r['motivo']}")
+    rev = informe.mails_a_revisar(con)
+    if rev:
+        print("Mails a revisar (no se procesaron):")
+        for x in rev:
+            print(f"  {x}")
     cua = con.execute("SELECT id, mail, actividad, motivo_cuarentena FROM entregas WHERE estado='cuarentena'").fetchall()
     if cua:
         print("En cuarentena (no van a la IA; liberar con ./tutor.sh liberar ID):")
         for r in cua:
             print(f"  #{r['id']} {r['mail']} {r['actividad']}: {r['motivo_cuarentena']}")
+
+
+def _subir_o_avisar(cfg, a, ruta):
+    if a.subir and not cfg.piloto:
+        print("subido a Borradores:", bool(correo.subir_emls(cfg, [str(ruta)])))
+    else:
+        print("para subirlo a tu casilla: agregá --subir (queda como borrador, no se envía)")
+
+
+def cmd_asignar(cfg, con, a):
+    u = unidades.buscar(cfg.unidades, a.unidad)
+    if a.actividad not in u.actividades:
+        raise SystemExit(f"{u.codigo} no tiene la actividad {a.actividad}. Hay: {', '.join(u.actividades)}")
+    curso = a.curso.upper()
+    ruta, n = correo.borrador_trabajo(cfg, con, u, a.actividad, curso)
+    print(f"borrador del trabajo {u.codigo} {a.actividad} para {curso} ({n} inscriptos en copia oculta): {ruta}")
+    if not n:
+        print("ojo: no hay inscriptos en ese curso todavía")
+    _subir_o_avisar(cfg, a, ruta)
+
+
+def cmd_inscripcion_borrador(cfg, con, a):
+    us = list(unidades.todas(cfg.unidades).values())
+    ruta = correo.borrador_inscripcion(cfg, us[0].materia if len(us) == 1 else "")
+    print(f"borrador de inscripción: {ruta}")
+    _subir_o_avisar(cfg, a, ruta)
 
 
 def cmd_unidades(cfg, con, a):
@@ -146,6 +179,8 @@ def cmd_procesar(cfg, con, a):
         correo.escribir_eml(cfg, con, d["id"])
     n_leg = informe.escribir_legajos(cfg, con)
     res = informe.resumen(con, u, faltan)
+    res["iteraciones"] = informe.iteraciones(con, u, cfg.nota_aprobacion, cfg.max_iteraciones)
+    res["mails_a_revisar"] = informe.mails_a_revisar(con)
     res["seguridad"] = informe.resumen_seguridad(con, u, uso, cfg, corte_tope)
     sintesis = {"en_una_linea": "Sin entregas nuevas para evaluar.", "sugerencias": []}
     if any(t["niveles"] for t in res["tabla"]) and not a.sin_ia:
@@ -163,7 +198,7 @@ def cmd_procesar(cfg, con, a):
                 (inicio.isoformat(timespec="seconds"), datetime.now().isoformat(timespec="seconds"), u.codigo,
                  len(filas), uso["llamadas"], uso["entrada"], uso["salida"], uso["costo"]))
     con.commit()
-    print(f"legajos: {n_leg} · informe: {ruta}")
+    print(f"legajos: {n_leg} · informe: {ruta} · planilla: {planilla.escribir(cfg, con, u)}")
     if cfg.piloto:
         print("modo piloto: borradores solo como .eml locales, no se sube nada")
     elif a.subir:
@@ -179,7 +214,12 @@ def main(argv=None):
     ap.add_argument("--hoy", type=lambda s: datetime.fromisoformat(s), default=datetime.now())
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("configurar", help="primera vez: mail de la cuenta, dominio del colegio, IMAP (fuera de git)")
-    sub.add_parser("sync")
+    sub.add_parser("sync", help="lee la casilla en solo lectura")
+    p = sub.add_parser("asignar", help="borrador del mail del trabajo para un curso")
+    p.add_argument("unidad"); p.add_argument("actividad"); p.add_argument("--curso", required=True)
+    p.add_argument("--subir", action="store_true")
+    p = sub.add_parser("inscripcion-borrador", help="borrador del mail de inscripción")
+    p.add_argument("--subir", action="store_true")
     sub.add_parser("estado")
     sub.add_parser("unidades")
     p = sub.add_parser("pendientes"); p.add_argument("unidad")
@@ -203,7 +243,7 @@ def main(argv=None):
     cfg = config.cargar(piloto=a.piloto)
     _env(cfg)
     con = db.conectar(cfg.db)
-    {"sync": cmd_sync, "estado": cmd_estado, "unidades": cmd_unidades,
+    {"sync": cmd_sync, "asignar": cmd_asignar, "inscripcion-borrador": cmd_inscripcion_borrador, "estado": cmd_estado, "unidades": cmd_unidades,
      "pendientes": cmd_pendientes, "procesar": cmd_procesar, "liberar": cmd_liberar, "metricas": cmd_metricas,
      "calidad": cmd_calidad, "evaluar-agente": cmd_evaluar_agente, "purgar": cmd_purgar}[a.cmd](cfg, con, a)
 

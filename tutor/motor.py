@@ -48,8 +48,40 @@ def _sospechas(con, eid) -> list:
     return out
 
 
+def rondas(filas) -> list:
+    """Si un alumno mandó varias versiones de la misma actividad, cada una va en una ronda distinta,
+    en orden: así la versión 2 se evalúa sabiendo cómo le fue en la 1."""
+    vistas, out = {}, []
+    for f in sorted(filas, key=lambda f: (f["marca_temporal"], f["id"])):
+        k = (f["mail"], f["actividad"])
+        n = vistas.get(k, 0)
+        vistas[k] = n + 1
+        while len(out) <= n:
+            out.append([])
+        out[n].append(f)
+    return out
+
+
 def evaluar_entregas(cfg, con, unidad, filas, corrida: str, guardar_cache: bool = True) -> dict:
     """Devuelve {'procesadas', 'fallidas', 'uso', 'corte_tope', 'caminos'}."""
+    total = {"procesadas": 0, "fallidas": [], "uso": {"llamadas": 0, "entrada": 0, "salida": 0, "costo": 0.0},
+             "corte_tope": False, "caminos": Counter()}
+    for ronda in rondas(filas):
+        tope = cfg.tope_usd_corrida - total["uso"]["costo"]
+        r = _evaluar_ronda(cfg, con, unidad, ronda, corrida, guardar_cache, tope)
+        total["procesadas"] += r["procesadas"]
+        total["fallidas"] += r["fallidas"]
+        for k in total["uso"]:
+            total["uso"][k] += r["uso"][k]
+        total["caminos"].update(r["caminos"])
+        if r["corte_tope"]:
+            total["corte_tope"] = True
+            break
+    total["caminos"] = dict(total["caminos"])
+    return total
+
+
+def _evaluar_ronda(cfg, con, unidad, filas, corrida: str, guardar_cache: bool, tope: float) -> dict:
     uso = {"llamadas": 0, "entrada": 0, "salida": 0, "costo": 0.0}
     caminos, fallidas = Counter(), []
     procesadas, corte = 0, False
@@ -69,7 +101,7 @@ def evaluar_entregas(cfg, con, unidad, filas, corrida: str, guardar_cache: bool 
     for _, grupo in groupby(orden, key=lambda f: f["actividad"]):
         grupo = list(grupo)
         for i in range(0, len(grupo), cfg.lote_max):
-            if uso["costo"] >= cfg.tope_usd_corrida:
+            if uso["costo"] >= tope:
                 corte = True
                 break
             tanda = []
@@ -82,6 +114,7 @@ def evaluar_entregas(cfg, con, unidad, filas, corrida: str, guardar_cache: bool 
             a_ia = {router.RAPIDO: [], router.FUERTE: []}
             for p in tanda:
                 p["solo_para_vos"]["canario"] = canario
+                p["_calificacion"] = {"equivalencias": cfg.equivalencias, "aprobacion": cfg.nota_aprobacion}
                 p["_sospechas"] = _sospechas(con, p["entrega_id"])
                 # 1) caché de evaluaciones
                 clave = clave_cache(p, version)

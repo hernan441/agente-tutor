@@ -147,13 +147,13 @@ def revisar_entregas(cfg, con, unidad_codigo: str) -> dict:
             motivo = m
         elif not con.execute("SELECT 1 FROM alumnos WHERE mail=?", (mail,)).fetchone():
             motivo = "no está inscripto"
-        # exceso por actividad (cuenta las anteriores, procesadas o no, fuera de cuarentena)
+        # tope de iteraciones por actividad (cuenta las anteriores, procesadas o no, fuera de cuarentena)
         if not motivo:
             n = con.execute("""SELECT COUNT(*) FROM entregas WHERE mail=? AND unidad=? AND actividad=?
                                AND estado != 'cuarentena' AND (marca_temporal < ? OR (marca_temporal = ? AND id < ?))""",
                             (mail, f["unidad"], f["actividad"], f["marca_temporal"], f["marca_temporal"], eid)).fetchone()[0]
-            if n >= cfg.max_entregas_por_actividad:
-                motivo = f"más de {cfg.max_entregas_por_actividad} entregas de {f['actividad']}"
+            if n >= cfg.max_iteraciones:
+                motivo = f"más de {cfg.max_iteraciones} versiones de {f['actividad']}: revisalo vos"
         # exceso por día y ráfaga
         if not motivo:
             t = datetime.fromisoformat(f["marca_temporal"])

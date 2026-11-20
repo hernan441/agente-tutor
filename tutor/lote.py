@@ -29,6 +29,25 @@ def antecedentes(con, mail: str, unidad: str, antes_de_id: int) -> dict:
     }
 
 
+def version_anterior(con, fila) -> dict:
+    """La versión previa de la MISMA actividad (iteración): nota, niveles y próximo paso."""
+    prev = con.execute(
+        """SELECT e.id, a.nota, a.proximo_paso FROM entregas e JOIN analisis a ON a.entrega_id=e.id
+           WHERE e.mail=? AND e.unidad=? AND e.actividad=? AND e.id<? AND e.estado='ok'
+           ORDER BY e.id DESC LIMIT 1""", (fila["mail"], fila["unidad"], fila["actividad"], fila["id"])).fetchone()
+    if not prev:
+        return {}
+    niveles = {r["criterio"]: r["nivel"] for r in con.execute(
+        "SELECT criterio, nivel FROM evaluaciones WHERE entrega_id=?", (prev["id"],))}
+    return {"nota": prev["nota"], "niveles": niveles, "proximo_paso_pedido": prev["proximo_paso"] or ""}
+
+
+def iteracion(con, fila) -> int:
+    return 1 + con.execute(
+        """SELECT COUNT(*) FROM entregas WHERE mail=? AND unidad=? AND actividad=? AND id<? AND estado='ok'""",
+        (fila["mail"], fila["unidad"], fila["actividad"], fila["id"])).fetchone()[0]
+
+
 def paquete(con, unidad, fila, cache_dir=None) -> dict:
     act = unidad.actividades.get(fila["actividad"])
     if act is None:
@@ -63,7 +82,9 @@ def paquete(con, unidad, fila, cache_dir=None) -> dict:
             "texto_de_adjuntos": texto_adj,
             "imagenes_para_mirar": imagenes,
         },
-        "antecedentes": antecedentes(con, fila["mail"], fila["unidad"], fila["id"]),
+        "iteracion": iteracion(con, fila),
+        "antecedentes": {**antecedentes(con, fila["mail"], fila["unidad"], fila["id"]),
+                         "version_anterior": version_anterior(con, fila)},
     }
 
 

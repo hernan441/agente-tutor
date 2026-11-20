@@ -1,6 +1,5 @@
 """Tests de las partes sin IA. Correr: venv/bin/pytest -q"""
 
-import csv
 import os
 import shutil
 from datetime import datetime
@@ -51,25 +50,9 @@ def test_sync_piloto_sin_duplicar(cfg, con):
     r1 = sync.sincronizar(cfg, con)
     r2 = sync.sincronizar(cfg, con)
     assert r1["inscripcion"]["nuevos"] == 8 and r1["inscripcion"]["rechazados"] == 2
-    assert r1["entregas"]["nuevas"] == 14 and r1["entregas"]["sin_inscripcion"] == 1
-    assert r2["entregas"]["nuevas"] == 0
-
-
-def test_encabezados_de_google_forms(tmp_path, con):
-    p = tmp_path / "forms.csv"
-    with open(p, "w", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
-        w.writerow(["Marca temporal", "Dirección de correo electrónico", "Nombre y apellido", "Unidad",
-                    "Actividad", "Tu respuesta", "(opcional) Subí un archivo o audio",
-                    "¿Usaste IA? ¿Cuál, qué le pediste y qué corregiste vos?", "¿Qué entendiste bien y qué te falta?"])
-        w.writerow(["17/11/2026 18:20:05", "A@B.EDU", "Ana Pérez", "BIO6-ALIM", "A4 — Auditoría", "texto",
-                    "https://drive.google.com/open?id=XYZ", "ChatGPT", "bien"])
-    r = sync.cargar_entregas(con, sync.leer_csv(p), tmp_path, {"XYZ": p})
-    fila = con.execute("SELECT * FROM entregas").fetchone()
-    assert r["nuevas"] == 1
-    assert fila["mail"] == "a@b.edu" and fila["actividad"] == "A4"
-    assert fila["marca_temporal"] == "2026-11-17 18:20:05"
-    assert fila["archivos"] == str(p) and fila["uso_ia"] == "ChatGPT"
+    assert r1["entregas"]["nuevas"] == 15 and r1["entregas"]["sin_inscripcion"] == 1
+    assert r1["mails"]["revisar"] == 2 and r1["mails"]["ignorado"] == 1
+    assert r2["entregas"]["nuevas"] == 0 and r2["mails"]["visto"] == sum(r1["mails"].values())
 
 
 def test_adjuntos_sin_ia(cfg, con):
@@ -103,7 +86,8 @@ def test_audio_transcripto(cfg, con):
 
 def _paquete(con, cfg, unidad, nombre="Tomás", act="A4"):
     sync.sincronizar(cfg, con)
-    fila = con.execute("SELECT * FROM entregas WHERE nombre=? AND actividad=?", (nombre, act)).fetchone()
+    fila = con.execute("SELECT * FROM entregas WHERE nombre LIKE ? AND actividad=? ORDER BY id",
+                       (nombre + "%", act)).fetchone()
     return lote.paquete(con, unidad, fila)
 
 

@@ -7,7 +7,7 @@
 - **Materia:**
 - **Curso / nivel:**
 - **Docente:**
-- **Código de unidad:** (corto, sin espacios — es el que el alumno elige en el formulario)
+- **Código de unidad:** (corto, sin espacios — va en el asunto de los mails: [CODIGO A1])
 - **Cursos (como figuran en la inscripción):** (separados por coma, ej.: 6A, 6B)
 - **Material de la clase teórica:** `clase.md` (o PDF en esta carpeta)
 
@@ -20,7 +20,7 @@
 - M3 — Los estudiantes comprenderán por qué…
 
 ## 4. Actividades (desempeños de comprensión)
-Cada actividad tiene un código que el alumno elige en el formulario.
+Cada actividad tiene un código (A1, A2…) que va en el asunto del mail del trabajo; el alumno responde ese mail.
 
 ### A1 — <nombre> (inicial / exploración)
 - **Consigna para el alumno:**

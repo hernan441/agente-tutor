@@ -83,6 +83,7 @@ def _entrega(con, mail, act, ts, texto):
 
 
 def test_exceso_por_actividad_y_rafaga(cfg, con, unidad):
+    cfg.max_iteraciones = 3
     con.execute("INSERT INTO alumnos VALUES ('ana@ejemplo.edu','Ana','Paz','6A','2026-03-01')")
     for i in range(5):
         _entrega(con, "ana@ejemplo.edu", "A1", f"2026-11-10 10:{i * 5:02d}:00", f"respuesta distinta numero {i} " * 3)
@@ -174,7 +175,7 @@ def test_pdf_con_texto_oculto(tmp_path):
 
 def _paquete(cfg, con, unidad):
     sync.sincronizar(cfg, con)
-    fila = con.execute("SELECT * FROM entregas WHERE nombre='Lucía' AND actividad='A4'").fetchone()
+    fila = con.execute("SELECT * FROM entregas WHERE nombre LIKE 'Lucía%' AND actividad='A4'").fetchone()
     p = lote.paquete(con, unidad, fila)
     p["solo_para_vos"]["canario"] = "CANARIO-abc123"
     return p

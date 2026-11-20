@@ -1,19 +1,25 @@
 # Copiar a config.toml (que NO va a git) y completar.
 
-[google]
-# Remoto de rclone autorizado con la cuenta de la cátedra, scope drive.readonly:
-#   rclone config create catedra drive scope=drive.readonly
-rclone_remoto = "catedra"
-hoja_inscripcion = "Inscripción (respuestas)"
-hoja_entregas = "Entregas (respuestas)"
-carpeta_archivos = "Entregas (File responses)"
-
 [correo]
-# Solo se suben BORRADORES por IMAP. El sistema nunca envía mails.
-# La contraseña de aplicación va en .env como TUTOR_IMAP_PASS
+# Todo pasa por esta casilla. El sistema la LEE en solo lectura (no marca, no mueve, no borra)
+# y deja BORRADORES por IMAP. Nunca envía mails.
+# La contraseña de aplicación va en .env como TUTOR_IMAP_PASS (la carga ./tutor.sh configurar).
 cuenta = "catedra@ejemplo.edu"
 imap_host = "imap.gmail.com"
+carpeta = "INBOX"
+# No se leen mails anteriores a esta fecha (AAAA-MM-DD)
+desde = ""
 firma_remitente = "Cátedra"
+zona_horaria = "America/Argentina/Buenos_Aires"
+
+[calificacion]
+# Nivel de rúbrica -> nota. La nota es el promedio de los criterios, redondeado.
+nota_inicial = 4
+nota_en_desarrollo = 6
+nota_logrado = 8
+nota_destacado = 10
+# Con esta nota o más la actividad queda aprobada; si no, el alumno itera.
+nota_aprobacion = 7
 
 [audio]
 # Python con faster-whisper instalado (vacío = el del proyecto)
@@ -34,7 +40,8 @@ dominios_permitidos = ["colegio.edu.ar"]
 # Opcional: CSV con los mails oficiales de los alumnos; si está, además tienen que figurar ahí.
 nomina = ""
 # Anti-inundación
-max_entregas_por_actividad = 3
+# Versiones de una misma actividad por alumno; pasado el tope, queda para que la mires vos
+max_iteraciones = 6
 max_entregas_por_alumno_dia = 10
 max_entregas_por_corrida = 60
 tope_usd_corrida = 1.00

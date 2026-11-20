@@ -104,6 +104,29 @@ CREATE TABLE IF NOT EXISTS cache_evaluaciones (
     json TEXT NOT NULL,
     creado_en TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS buzon_vistos (
+    clave TEXT PRIMARY KEY,      -- hash del Message-ID: no se guarda nada del mail ajeno
+    resultado TEXT NOT NULL,     -- inscripcion | entrega | ignorado | revisar
+    fecha TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS mails_a_revisar (
+    clave TEXT PRIMARY KEY,
+    mail TEXT NOT NULL,
+    asunto TEXT,
+    motivo TEXT NOT NULL,
+    fecha TEXT NOT NULL,
+    resuelto INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS asignaciones (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    unidad TEXT NOT NULL,
+    actividad TEXT NOT NULL,
+    curso TEXT NOT NULL,
+    asunto TEXT NOT NULL,
+    message_id TEXT,
+    fecha TEXT NOT NULL,
+    UNIQUE (unidad, actividad, curso)
+);
 CREATE TABLE IF NOT EXISTS corridas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     inicio TEXT NOT NULL,
@@ -129,6 +152,8 @@ COLUMNAS_NUEVAS = [
     ("analisis", "version_prompt", "TEXT"),
     ("devoluciones", "texto_enviado", "TEXT"),               # lo que el docente terminó mandando
     ("devoluciones", "edicion_pct", "REAL"),                 # cuánto lo cambió (0 = nada)
+    ("analisis", "nota", "INTEGER"),                         # 1 a 10, calculada por script (NULL = sin nota)
+    ("entregas", "message_id", "TEXT"),                      # para responder en el mismo hilo
 ]
 
 

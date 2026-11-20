@@ -17,8 +17,31 @@ PROHIBIDO_EN_DEVOLUCION = [
 NGRAMA = 7  # 7 palabras seguidas de la respuesta esperada = posible fuga
 
 
+EQUIVALENCIAS = {"Inicial": 4, "En desarrollo": 6, "Logrado": 8, "Destacado": 10}
+APROBACION = 7
+
+
 class Invalido(ValueError):
     pass
+
+
+def calcular_nota(niveles: list, equivalencias: dict | None = None) -> int | None:
+    """Promedio de los niveles pasado a nota de 1 a 10, redondeado hacia arriba en el .5."""
+    eq = equivalencias or EQUIVALENCIAS
+    valores = [eq[n] for n in niveles if n in eq]
+    if not valores:
+        return None
+    return max(1, min(10, int(sum(valores) / len(valores) + 0.5)))
+
+
+def linea_nota(nota: int | None, aprobacion: int, iteracion: int) -> str:
+    if nota is None:
+        return ""
+    if nota >= aprobacion:
+        return (f"Nota: {nota}/10 — ¡Aprobada!" + (f" (versión {iteracion})" if iteracion > 1 else "")
+                + " Si querés seguir profundizando, la pregunta de arriba es para vos.")
+    return (f"Nota: {nota}/10. Para aprobar necesitás {aprobacion}: trabajá sobre lo que te marqué "
+            "y respondé este mail con la nueva versión.")
 
 
 def _palabras(s: str) -> list:
@@ -87,7 +110,7 @@ def validar(r: dict, paquete: dict) -> list:
     return avisos
 
 
-def cuerpo_devolucion(r: dict, alumno: str, firma: str) -> str:
+def cuerpo_devolucion(r: dict, alumno: str, firma: str, nota_txt: str = "") -> str:
     partes = [f"Hola {alumno}:", "",
               f"Aclarar — {r['aclarar'].strip()}", "",
               f"Valorar — {r['valorar'].strip()}", "",
@@ -95,6 +118,8 @@ def cuerpo_devolucion(r: dict, alumno: str, firma: str) -> str:
               f"Sugerir — {r['sugerir'].strip()}", ""]
     if r.get("nivel_msg"):
         partes += [r["nivel_msg"].strip(), ""]
+    if nota_txt:
+        partes += [nota_txt, ""]
     partes.append(firma)
     return "\n".join(partes)
 
@@ -103,22 +128,28 @@ def guardar(con, unidad, paquete, r: dict, avisos: list, meta: dict | None = Non
     meta = meta or {}
     eid = paquete["entrega_id"]
     fila = con.execute("SELECT * FROM entregas WHERE id=?", (eid,)).fetchone()
+    calif = paquete.get("_calificacion") or {}
+    aprobacion = calif.get("aprobacion", APROBACION)
+    nota = (calcular_nota([ev["nivel"] for ev in r["evaluaciones"]], calif.get("equivalencias"))
+            if paquete["actividad"]["lleva_nota"] else None)
     for ev in r["evaluaciones"]:
         con.execute("INSERT OR REPLACE INTO evaluaciones VALUES (?,?,?,?)",
                     (eid, ev["criterio"], ev["nivel"], ev.get("evidencia", "")))
     con.execute(
         """INSERT OR REPLACE INTO analisis (entrega_id, ideas_erroneas, senal_ia, senal_ia_motivo,
            nota_docente, proximo_paso, revisar, revisar_motivo, json_raw, intento_manipulacion,
-           camino, modelo, version_prompt)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+           camino, modelo, version_prompt, nota)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         (eid, json.dumps(r.get("ideas_erroneas", []), ensure_ascii=False), int(bool(r.get("senal_ia"))),
          r.get("senal_ia_motivo", ""), r.get("nota_docente", ""), r.get("proximo_paso", ""),
          int(bool(avisos)), "; ".join(avisos), json.dumps(r, ensure_ascii=False),
-         int(bool(r.get("intento_manipulacion"))), meta.get("camino"), meta.get("modelo"), meta.get("version_prompt")))
-    asunto = f"{unidad.materia} — Devolución de {fila['actividad']}: {r['asunto'].strip()}"
+         int(bool(r.get("intento_manipulacion"))), meta.get("camino"), meta.get("modelo"), meta.get("version_prompt"), nota))
+    # El código va en el asunto: si el alumno responde con una nueva versión, se reconoce sola.
+    asunto = f"[{fila['unidad']} {fila['actividad']}] {unidad.materia} — Devolución: {r['asunto'].strip()}"
     if avisos:
         asunto = "[REVISAR] " + asunto
-    cuerpo = cuerpo_devolucion(r, paquete["alumno"], unidad.firma)
+    cuerpo = cuerpo_devolucion(r, paquete["alumno"], unidad.firma,
+                               linea_nota(nota, aprobacion, paquete.get("iteracion", 1)))
     con.execute(
         """INSERT INTO devoluciones (entrega_id, mail, unidad, actividad, tipo, asunto, cuerpo, creado_en)
            VALUES (?,?,?,?, 'devolucion', ?,?,?)

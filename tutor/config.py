@@ -14,15 +14,19 @@ class Config:
     datos: Path = RAIZ / "datos"
     unidades: Path = RAIZ / "unidades"
     plantillas: Path = RAIZ / "plantillas"
-    # Google (cuenta de la cátedra) vía rclone, solo lectura
-    rclone_remoto: str = "catedra"
-    hoja_inscripcion: str = "Inscripción (respuestas)"
-    hoja_entregas: str = "Entregas (respuestas)"
-    carpeta_archivos: str = "Entregas (File responses)"
-    # Correo: solo borradores por IMAP, nunca se envía
+    # Correo: se LEE la casilla (solo lectura) y se dejan BORRADORES por IMAP; nunca se envía
     cuenta: str = ""
     imap_host: str = "imap.gmail.com"
+    carpeta: str = "INBOX"
+    desde: str = ""                      # AAAA-MM-DD: no se leen mails anteriores
     firma_remitente: str = "Cátedra"
+    zona_horaria: str = "America/Argentina/Buenos_Aires"
+    # Calificación: nivel de rúbrica -> nota; promedio redondeado
+    nota_inicial: int = 4
+    nota_en_desarrollo: int = 6
+    nota_logrado: int = 8
+    nota_destacado: int = 10
+    nota_aprobacion: int = 7
     # Audio: python que tiene faster-whisper (puede ser otro venv)
     audio_python: str = ""
     whisper_modelo: str = "medium"
@@ -34,7 +38,7 @@ class Config:
     # Seguridad
     dominios_permitidos: list = field(default_factory=lambda: ["colegio.edu.ar"])
     nomina: str = ""
-    max_entregas_por_actividad: int = 3
+    max_iteraciones: int = 6              # versiones de una misma actividad por alumno
     max_entregas_por_alumno_dia: int = 10
     max_entregas_por_corrida: int = 60
     tope_usd_corrida: float = 1.00
@@ -49,6 +53,11 @@ class Config:
     @property
     def db(self) -> Path:
         return self.datos / "tutor.db"
+
+    @property
+    def equivalencias(self) -> dict:
+        return {"Inicial": self.nota_inicial, "En desarrollo": self.nota_en_desarrollo,
+                "Logrado": self.nota_logrado, "Destacado": self.nota_destacado}
 
 
 def cargar(piloto: bool = False) -> Config:
@@ -67,6 +76,8 @@ def cargar(piloto: bool = False) -> Config:
             for k, v in plano.items():
                 if k == "modelo":  # compatibilidad con configs viejas
                     cfg.modelo_rapido = v
+                elif k == "max_entregas_por_actividad":
+                    cfg.max_iteraciones = v
                 elif k == "datos":
                     cfg.datos = (RAIZ / v).resolve()
                 elif hasattr(cfg, k) and k not in ("unidades", "plantillas", "raiz", "extra"):
