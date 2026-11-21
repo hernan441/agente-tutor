@@ -47,6 +47,8 @@ class Config:
     max_mb: float = 15
     max_minutos_audio: float = 10
     rafaga_por_minuto: int = 5
+    # Panel web: solo estas IP de Tailscale (vacío = cualquiera con el token)
+    panel_ips: list = field(default_factory=list)
     piloto: bool = False
     extra: dict = field(default_factory=dict)
 

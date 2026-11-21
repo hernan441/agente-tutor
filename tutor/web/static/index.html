@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agente tutor</title>
+  <meta name="theme-color" content="#1f5f8b">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icono.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <div id="sin-conexion" hidden>Sin conexión con el panel. Revisá que Tailscale esté conectado en esta compu. <button id="reintentar">Reintentar</button></div>
+
+  <section id="login" hidden>
+    <form id="form-login" class="tarjeta">
+      <img src="icono.svg" alt="" width="56" height="56">
+      <h1>Agente tutor</h1>
+      <p>Pegá el token del panel (está en el archivo <code>.env</code> del server, <code>TUTOR_PANEL_TOKEN</code>).</p>
+      <input id="token" type="password" autocomplete="off" placeholder="Token" required>
+      <button type="submit" class="primario">Entrar</button>
+      <p id="login-error" class="error"></p>
+    </form>
+  </section>
+
+  <div id="app" hidden>
+    <aside>
+      <div class="marca"><img src="icono.svg" alt="" width="28" height="28"><span>Agente tutor <small id="app-num"></small></span></div>
+      <div id="piloto-chip" class="chip" hidden>PILOTO</div>
+      <nav>
+        <button data-vista="inicio" class="activo">🏠 Inicio</button>
+        <button data-vista="alumnos">👥 Alumnos</button>
+        <button data-vista="entregas">📝 Entregas y notas</button>
+        <button data-vista="borradores">✉️ Borradores <span class="badge" id="b-borradores"></span></button>
+        <button data-vista="revisar">⚠️ Mails a revisar <span class="badge" id="b-revisar"></span></button>
+        <button data-vista="informe">📊 Informe</button>
+        <button data-vista="chat">💬 Chat</button>
+        <button data-vista="ajustes">⚙️ Ajustes</button>
+      </nav>
+      <div class="pie" id="cuenta"></div>
+    </aside>
+
+    <main>
+      <!-- INICIO -->
+      <section data-vista="inicio">
+        <header><h2>Inicio</h2><button class="sec" id="refrescar">↻ Actualizar</button></header>
+        <div class="tarjetas" id="tarjetas"></div>
+        <div class="dos-col">
+          <div class="tarjeta">
+            <h3>Acciones</h3>
+            <div class="acciones">
+              <button class="primario" data-accion="sync">📥 Leer casilla</button>
+              <div class="fila">
+                <select id="a-unidad-proc" aria-label="Unidad"></select>
+                <button class="primario" id="btn-procesar">⚙️ Procesar</button>
+                <button class="sec" id="btn-subir">⬆️ Subir borradores</button>
+              </div>
+              <div class="fila">
+                <select id="a-unidad" aria-label="Unidad"></select>
+                <select id="a-actividad" aria-label="Actividad"></select>
+                <input id="a-curso" placeholder="Curso (6A)" size="7" aria-label="Curso">
+                <button class="sec" id="btn-asignar">📨 Asignar trabajo</button>
+              </div>
+              <button class="sec" data-accion="inscripcion">📝 Borrador de inscripción</button>
+              <label class="check"><input type="checkbox" id="a-subir"> subir también a Borradores de la casilla (nunca se envía)</label>
+            </div>
+          </div>
+          <div class="tarjeta">
+            <h3>Actividad <span id="trabajo-estado" class="estado"></span></h3>
+            <pre id="log" class="log">Todavía no corriste ninguna acción.</pre>
+          </div>
+        </div>
+        <div class="tarjeta" id="iteraciones"></div>
+      </section>
+
+      <!-- ALUMNOS -->
+      <section data-vista="alumnos" hidden>
+        <header><h2>Alumnos</h2><input id="f-alumno" placeholder="Buscar…" aria-label="Buscar alumno"></header>
+        <div class="dos-col ancho-izq">
+          <div class="tarjeta"><table id="t-alumnos"></table></div>
+          <div class="tarjeta md" id="legajo"><p class="tenue">Elegí un alumno para ver su legajo.</p></div>
+        </div>
+      </section>
+
+      <!-- ENTREGAS -->
+      <section data-vista="entregas" hidden>
+        <header><h2>Entregas y notas</h2>
+          <div class="fila"><select id="f-unidad" aria-label="Unidad"></select><select id="f-act" aria-label="Actividad"><option value="">Todas</option></select>
+          <select id="f-estado" aria-label="Estado"><option value="">Todas</option><option value="revisar">[REVISAR]</option><option value="cuarentena">Cuarentena</option><option value="pendiente">Sin procesar</option><option value="aprobada">Aprobadas</option><option value="iterando">Siguen corrigiendo</option></select></div>
+        </header>
+        <div class="tarjeta"><table id="t-entregas"></table></div>
+      </section>
+
+      <!-- BORRADORES -->
+      <section data-vista="borradores" hidden>
+        <header><h2>Borradores</h2><span class="tenue">Revisalos, editalos si hace falta y subilos a la casilla. Se mandan desde tu correo.</span></header>
+        <div class="dos-col ancho-izq">
+          <div class="tarjeta"><table id="t-borradores"></table></div>
+          <div class="tarjeta" id="editor"><p class="tenue">Elegí un borrador.</p></div>
+        </div>
+      </section>
+
+      <!-- REVISAR -->
+      <section data-vista="revisar" hidden>
+        <header><h2>Mails a revisar</h2><span class="tenue">El agente no los procesó porque no supo qué eran. No adivina.</span></header>
+        <div id="l-revisar"></div>
+      </section>
+
+      <!-- INFORME -->
+      <section data-vista="informe" hidden>
+        <header><h2>Informe</h2><div class="fila"><select id="i-unidad" aria-label="Unidad"></select><button class="sec" id="btn-planilla">⬇️ Planilla de notas (.xlsx)</button></div></header>
+        <div class="tarjeta md" id="informe-txt"></div>
+      </section>
+
+      <!-- CHAT -->
+      <section data-vista="chat" hidden>
+        <header><h2>Chat</h2><span class="tenue">Preguntale cómo va el curso o pedile algo. Las acciones las confirmás vos.</span></header>
+        <div class="tarjeta chat">
+          <div id="mensajes"></div>
+          <form id="form-chat"><input id="msg" autocomplete="off" placeholder="Ej.: ¿quién no entregó la A4?"><button class="primario">Enviar</button></form>
+        </div>
+      </section>
+
+      <!-- AJUSTES -->
+      <section data-vista="ajustes" hidden>
+        <header><h2>Ajustes</h2></header>
+        <div class="dos-col">
+          <div class="tarjeta" id="ajustes-datos"></div>
+          <div class="tarjeta">
+            <h3>Contraseña de aplicación del correo</h3>
+            <p class="tenue">Hace falta para leer la casilla y dejar borradores. Se guarda solo en el server (<code>.env</code>), nunca en el repositorio, y no se vuelve a mostrar.</p>
+            <form id="form-clave" class="fila"><input id="clave" type="password" autocomplete="off" placeholder="xxxx xxxx xxxx xxxx"><button class="primario">Guardar</button></form>
+            <p id="clave-msg"></p>
+            <h3>Sesión</h3>
+            <button class="sec" id="salir">Salir (olvidar el token en esta compu)</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

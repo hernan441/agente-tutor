@@ -54,7 +54,16 @@ Un alumno puede intentar manipular la evaluación desde el texto, un PDF o una f
    arriba de todo en el informe.
 4. **El docente revisa siempre** antes de enviar.
 
-## 4. Retención de datos
+## 4. Panel web
+| Amenaza | Defensa |
+|---|---|
+| Alguien de afuera entra al panel | Escucha solo en `127.0.0.1`; desde otra compu se llega únicamente por la red privada de Tailscale (nunca *funnel*). Token obligatorio (comparación en tiempo constante) y lista opcional de IP. |
+| Una acción peligrosa desde el panel | Lista cerrada de acciones validadas (unidad, actividad y curso contra lo cargado); `purgar` no está. Corren el mismo CLI, que nunca envía mails. |
+| Prompt injection por el chat | El asistente no tiene herramientas ni conectores: solo lee una foto del estado y **propone** una acción, que se valida contra la misma lista y corre solo si el docente toca el botón. |
+| Filtrar la contraseña del correo | Se guarda en `.env` (600, fuera de git) y la API solo informa si está cargada; nunca la devuelve. |
+| Leer archivos del server | Los estáticos se sirven solo desde `tutor/web/static`; mail, unidad e id se validan antes de usarse. |
+
+## 5. Retención de datos
 Al cerrar el ciclo lectivo, `./tutor.sh purgar --ciclo AAAA --confirmar` borra entregas, adjuntos,
 evaluaciones, devoluciones y legajos de ese año; con `--anonimizar` conserva los resultados con
 alumnos anónimos (útil para analizar la experiencia sin datos personales). Siempre se conservan

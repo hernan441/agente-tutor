@@ -16,8 +16,8 @@ def _extraer_json(texto: str, abre: str = "["):
     return json.loads(texto[i:j + 1])
 
 
-def _system_prompt(cfg) -> str:
-    texto = (cfg.raiz / ".claude" / "agents" / "tutor.md").read_text(encoding="utf-8")
+def _system_prompt(cfg, agente: str = "tutor") -> str:
+    texto = (cfg.raiz / ".claude" / "agents" / f"{agente}.md").read_text(encoding="utf-8")
     return texto.split("---", 2)[2].strip() if texto.startswith("---") else texto
 
 
@@ -26,7 +26,8 @@ def version_prompt(cfg) -> str:
     return hashlib.sha1(_system_prompt(cfg).encode()).hexdigest()[:10]
 
 
-def llamar(cfg, prompt: str, abre: str = "[", con_imagenes: bool = False, modelo: str | None = None) -> tuple[object, dict]:
+def llamar(cfg, prompt: str, abre: str = "[", con_imagenes: bool = False, modelo: str | None = None,
+           agente: str = "tutor") -> tuple[object, dict]:
     """Devuelve (json_respuesta, uso). La IA corre encerrada:
     --restricted (sin Bash ni web), solo la herramienta Read y solo si hay imágenes que mirar,
     sin servidores MCP/conectores (ni Gmail ni Drive), y con la carpeta de trabajo en la caché
@@ -35,7 +36,7 @@ def llamar(cfg, prompt: str, abre: str = "[", con_imagenes: bool = False, modelo
     cache.mkdir(parents=True, exist_ok=True)
     cmd = [cfg.claude_bin, "-p", "--restricted", "--strict-mcp-config", "--mcp-config", '{"mcpServers":{}}',
            "--tools", "Read" if con_imagenes else "", "--model", modelo or cfg.modelo_rapido,
-           "--system-prompt", _system_prompt(cfg), "--output-format", "json", prompt]
+           "--system-prompt", _system_prompt(cfg, agente), "--output-format", "json", prompt]
     t0 = time.monotonic()
     r = subprocess.run(cmd, capture_output=True, text=True, cwd=cache, timeout=1800)
     ms = int((time.monotonic() - t0) * 1000)
@@ -51,7 +52,7 @@ def llamar(cfg, prompt: str, abre: str = "[", con_imagenes: bool = False, modelo
         "costo": salida.get("total_cost_usd", 0.0) or 0.0,
         "ms": ms,
         "modelo": next(iter(salida.get("modelUsage") or {}), modelo or cfg.modelo_rapido),
-        "prompt": version_prompt(cfg),
+        "prompt": version_prompt(cfg) if agente == "tutor" else agente,
     }
     return _extraer_json(salida.get("result", ""), abre), uso
 

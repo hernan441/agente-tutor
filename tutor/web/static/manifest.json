@@ -1,0 +1,9 @@
+{
+  "name": "Agente tutor",
+  "short_name": "Tutor",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f6f8",
+  "theme_color": "#1f5f8b",
+  "icons": [{ "src": "icono.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

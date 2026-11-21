@@ -1,0 +1,17 @@
+# Servicio de usuario para el panel del tutor.
+# Copiar a ~/.config/systemd/user/ y ajustar WorkingDirectory a la carpeta del repo:
+#   systemctl --user daemon-reload && systemctl --user enable --now tutor-panel
+# Para verlo desde otra compu de tu tailnet (nunca con funnel):
+#   sudo tailscale serve --bg --https=10005 http://127.0.0.1:8851
+[Unit]
+Description=Panel del agente tutor
+After=network-online.target
+
+[Service]
+WorkingDirectory=%h/agente-tutor
+ExecStart=/usr/bin/env bash ./tutor.sh panel --puerto 8851
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

@@ -51,3 +51,7 @@ rafaga_por_minuto = 5
 max_archivos = 5
 max_mb = 15
 max_minutos_audio = 10
+
+[panel]
+# IP de Tailscale de las compus que pueden abrir el panel (vacío = cualquiera con el token)
+panel_ips = []

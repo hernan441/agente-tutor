@@ -86,6 +86,18 @@ def cmd_inscripcion_borrador(cfg, con, a):
     _subir_o_avisar(cfg, a, ruta)
 
 
+def cmd_subir(cfg, con, a):
+    if cfg.piloto:
+        print("modo piloto: no se sube nada")
+        return
+    print("borradores subidos:", correo.subir_borradores(cfg, con, unidades.buscar(cfg.unidades, a.unidad).codigo))
+
+
+def cmd_panel(cfg, con, a):
+    from .web import servidor
+    servidor.correr(cfg, a.puerto)
+
+
 def cmd_unidades(cfg, con, a):
     for u in unidades.todas(cfg.unidades).values():
         print(f"{u.codigo}: {u.titulo} — {u.materia} — cursos {', '.join(u.cursos)} — actividades {', '.join(u.actividades)}")
@@ -218,6 +230,10 @@ def main(argv=None):
     p = sub.add_parser("asignar", help="borrador del mail del trabajo para un curso")
     p.add_argument("unidad"); p.add_argument("actividad"); p.add_argument("--curso", required=True)
     p.add_argument("--subir", action="store_true")
+    p = sub.add_parser("subir", help="sube a Borradores las devoluciones pendientes de una unidad")
+    p.add_argument("unidad")
+    p = sub.add_parser("panel", help="panel web (solo en 127.0.0.1)")
+    p.add_argument("--puerto", type=int, default=8851)
     p = sub.add_parser("inscripcion-borrador", help="borrador del mail de inscripción")
     p.add_argument("--subir", action="store_true")
     sub.add_parser("estado")
@@ -243,7 +259,8 @@ def main(argv=None):
     cfg = config.cargar(piloto=a.piloto)
     _env(cfg)
     con = db.conectar(cfg.db)
-    {"sync": cmd_sync, "asignar": cmd_asignar, "inscripcion-borrador": cmd_inscripcion_borrador, "estado": cmd_estado, "unidades": cmd_unidades,
+    {"sync": cmd_sync, "asignar": cmd_asignar, "inscripcion-borrador": cmd_inscripcion_borrador,
+     "subir": cmd_subir, "panel": cmd_panel, "estado": cmd_estado, "unidades": cmd_unidades,
      "pendientes": cmd_pendientes, "procesar": cmd_procesar, "liberar": cmd_liberar, "metricas": cmd_metricas,
      "calidad": cmd_calidad, "evaluar-agente": cmd_evaluar_agente, "purgar": cmd_purgar}[a.cmd](cfg, con, a)
 

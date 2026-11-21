@@ -129,6 +129,18 @@ Copiar `plantillas/unidad.md` a `unidades/<materia>-<unidad>/unidad.md`, complet
 actividades (consigna, qué se espera ver, ideas erróneas frecuentes, criterios) y rúbrica, y dejar
 el material de la clase en `clase.md`. El código de la unidad y de cada actividad va en el asunto de los mails.
 
+## Panel web
+
+`./tutor.sh panel` abre un panel para manejar todo sin terminal (`./tutor.sh --piloto panel` lo muestra con los datos ficticios):
+- **Inicio:** estado (inscriptos, entregas sin procesar, [REVISAR], cuarentena, mails a revisar, gasto) y botones para leer la casilla, procesar, asignar un trabajo, armar la inscripción y subir borradores.
+- **Alumnos** con su legajo, **Entregas y notas** (versiones y estado), **Borradores** (revisar y editar antes de subir), **Mails a revisar** (inscribir a mano o descartar), **Informe** y planilla.
+- **Chat:** un asistente que contesta sobre el estado ("¿quién no entregó la A4?") y, si le pedís algo ("asigná la A4 a 6A"), te lo deja como botón. **No ejecuta nada solo y no tiene herramientas.**
+
+Escucha solo en `127.0.0.1` y pide el token de `.env` (`TUTOR_PANEL_TOKEN`, lo genera el primer arranque). Para usarlo desde otra compu
+se publica dentro de tu red de Tailscale (`deploy/tutor-panel.service` tiene los pasos). Opcionalmente, `[panel] panel_ips` limita las compus.
+
+![Panel: inicio](docs/panel_inicio.png)
+
 ## Notas
 
 Cada nivel de la rúbrica vale una nota (Inicial 4, En desarrollo 6, Logrado 8, Destacado 10, en
@@ -159,14 +171,15 @@ tutor/
   informe.py        legajos e informe al docente
   correo.py         .eml y borradores IMAP: devoluciones, trabajo, inscripción (nunca envía)
   planilla.py       planilla de calificaciones (.xlsx)
+  web/              panel web (servidor + front) y chat del asistente
   observabilidad.py métricas de uso, costo y calidad
   evals.py          evaluación del agente contra el docente
   unidades.py       lee unidad.md
-.claude/agents/     el prompt del agente tutor
+.claude/agents/     el prompt del agente tutor (evalúa) y del asistente del panel (chat)
 unidades/           una carpeta por unidad: unidad.md + clase.md
 plantillas/         plantilla de unidad y formato de devolución
 evals/              casos para que el docente corrija + resultados
 piloto/             mails ficticios (buzon/*.eml) y ejemplos de salida
-tests/              96 tests (sin IA)
+tests/              121 tests (sin IA)
 SECURITY.md         amenazas y defensas
 ```
