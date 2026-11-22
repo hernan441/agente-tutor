@@ -189,11 +189,18 @@ def revisar_entregas(cfg, con, unidad_codigo: str) -> dict:
             flags.append("respuesta_recortada")
             stats["recortadas"] += 1
         # inyección en lo que escribió el alumno
-        texto = " \n".join(filter(None, (f["respuesta"], f["uso_ia"], f["autoevaluacion"], f["nombre"])))
+        texto = " \n".join(filter(None, (f["respuesta"], f["uso_ia"], f["autoevaluacion"], f["nombre"],
+                                          f["pregunta"], f["cambios"])))
         for motivo_iny in detectar_inyeccion(texto):
             flags.append(f"sospecha_inyeccion:{motivo_iny}")
         if any(x.startswith("sospecha_inyeccion") for x in flags):
             stats["sospecha_inyeccion"] += 1
+        # ¿la versión nueva es un trabajo real? (compara con la anterior de la misma actividad)
+        from . import proceso
+        flags = [x for x in flags if not x.startswith("proceso:")]
+        for al in proceso.revisar_version(con, f):
+            flags.append(f"proceso:{al}")
+            stats["proceso"] = stats.get("proceso", 0) + 1
         _guardar(con, eid, None, flags)
     con.commit()
     return stats

@@ -154,6 +154,9 @@ COLUMNAS_NUEVAS = [
     ("devoluciones", "edicion_pct", "REAL"),                 # cuánto lo cambió (0 = nada)
     ("analisis", "nota", "INTEGER"),                         # 1 a 10, calculada por script (NULL = sin nota)
     ("entregas", "message_id", "TEXT"),                      # para responder en el mismo hilo
+    ("entregas", "pregunta", "TEXT"),                        # la pregunta que deja el alumno (C5)
+    ("entregas", "cambios", "TEXT"),                         # qué cambió respecto de la versión anterior
+    ("analisis", "preguntas_orales", "TEXT"),                # JSON: 2 preguntas para verificar en clase
 ]
 
 

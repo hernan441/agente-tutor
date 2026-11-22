@@ -79,6 +79,8 @@ def paquete(con, unidad, fila, cache_dir=None) -> dict:
             "respuesta": fila["respuesta"],
             "uso_ia_declarado": fila["uso_ia"],
             "autoevaluacion": fila["autoevaluacion"],
+            "pregunta_del_alumno": fila["pregunta"] or "",
+            "que_cambio": fila["cambios"] or "",
             "texto_de_adjuntos": texto_adj,
             "imagenes_para_mirar": imagenes,
         },

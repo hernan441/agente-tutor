@@ -35,6 +35,12 @@ def clave_cache(p: dict, version: str) -> str:
     return hashlib.sha1(f"{h}|{p['actividad']['codigo']}|{version}".encode()).hexdigest()
 
 
+def _proceso(con, eid) -> list:
+    return [f.split(":", 1)[1] for f in json.loads(
+        con.execute("SELECT flags FROM entregas WHERE id=?", (eid,)).fetchone()["flags"] or "[]")
+        if f.startswith("proceso:")]
+
+
 def _sospechas(con, eid) -> list:
     import os
     from . import adjuntos
@@ -116,6 +122,7 @@ def _evaluar_ronda(cfg, con, unidad, filas, corrida: str, guardar_cache: bool, t
                 p["solo_para_vos"]["canario"] = canario
                 p["_calificacion"] = {"equivalencias": cfg.equivalencias, "aprobacion": cfg.nota_aprobacion}
                 p["_sospechas"] = _sospechas(con, p["entrega_id"])
+                p["_proceso"] = _proceso(con, p["entrega_id"])
                 # 1) caché de evaluaciones
                 clave = clave_cache(p, version)
                 p["_clave"] = clave

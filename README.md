@@ -129,6 +129,16 @@ Copiar `plantillas/unidad.md` a `unidades/<materia>-<unidad>/unidad.md`, complet
 actividades (consigna, qué se espera ver, ideas erróneas frecuentes, criterios) y rúbrica, y dejar
 el material de la clase en `clase.md`. El código de la unidad y de cada actividad va en el asunto de los mails.
 
+## Más allá de la nota
+
+Inspirado en el debate sobre tutores con IA (ver la referencia en el PIF): lo que vale no es tener la respuesta,
+sino **saber preguntar, detectar errores y sostener el esfuerzo**. Por eso el agente también:
+
+- **Valora la pregunta del alumno.** Cada entrega termina con "Mi pregunta:" y se evalúa con el criterio C5 (curiosidad). El informe junta las mejores para abrir la clase.
+- **Cuida que la versión nueva sea un trabajo real.** En cada versión nueva el alumno cuenta "Qué cambié:". Un script (`tutor/proceso.py`, sin IA) compara con la versión anterior y marca las reescrituras totales con otra voz o los saltos bruscos de largo. No acusa a nadie: avisa al docente.
+- **Propone verificar en voz alta en lugar de volver al papel.** El informe dice a quién conviene escuchar en clase (por señal de copia acrítica, intento de manipulación, alerta de proceso o salto grande de nota) y da dos preguntas cortas armadas con lo que escribió esa persona.
+- **Arma grupos para la clase** (`tutor/grupos.py`, sin IA): grupos mixtos sobre el criterio más flojo del curso y grupos de discusión por idea errónea compartida.
+
 ## Panel web
 
 `./tutor.sh panel` abre un panel para manejar todo sin terminal (`./tutor.sh --piloto panel` lo muestra con los datos ficticios):
@@ -171,6 +181,8 @@ tutor/
   informe.py        legajos e informe al docente
   correo.py         .eml y borradores IMAP: devoluciones, trabajo, inscripción (nunca envía)
   planilla.py       planilla de calificaciones (.xlsx)
+  proceso.py        compara versiones: ¿la nueva es un trabajo real?
+  grupos.py         propuesta de grupos para la clase
   web/              panel web (servidor + front) y chat del asistente
   observabilidad.py métricas de uso, costo y calidad
   evals.py          evaluación del agente contra el docente
@@ -180,6 +192,6 @@ unidades/           una carpeta por unidad: unidad.md + clase.md
 plantillas/         plantilla de unidad y formato de devolución
 evals/              casos para que el docente corrija + resultados
 piloto/             mails ficticios (buzon/*.eml) y ejemplos de salida
-tests/              121 tests (sin IA)
+tests/              137 tests (sin IA)
 SECURITY.md         amenazas y defensas
 ```

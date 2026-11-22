@@ -93,12 +93,14 @@ def subir_borradores(cfg, con, unidad: str) -> int:
 INSTRUCCIONES_ENTREGA = """Cómo entregar: respondé ESTE mail (sin cambiar el asunto) con tu trabajo. Podés escribirlo
 en el cuerpo del mail y/o adjuntar fotos, PDF o un audio.
 
-Al final, agregá estas dos líneas:
+Al final, agregá estas líneas:
 IA: ¿usaste IA? ¿cuál, qué le pediste y qué corregiste vos?
 Autoevaluación: ¿qué entendiste bien y qué te falta?
+Mi pregunta: algo que te quedó picando sobre el tema (también se valora).
 
 Te voy a devolver comentarios y una nota. Si no llegás a 7, corregí y respondé de nuevo este
-mismo hilo con la nueva versión."""
+mismo hilo con la nueva versión, y agregá:
+Qué cambié: qué corregiste y por qué."""
 
 
 def borrador_trabajo(cfg, con, unidad, actividad: str, curso: str) -> tuple[Path, int]:

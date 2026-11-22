@@ -9,25 +9,25 @@ con una nueva versión, se reconozca sola.
 
 **Versión 1** (pegó la respuesta de la IA sin revisarla):
 
-**Asunto:** [BIO6-ALIM A4] Biotecnología — Devolución: tres organismos bien nombrados
+**Asunto:** [BIO6-ALIM A4] Biotecnología — Devolución: lo que dice la IA y lo que falta revisar
 
 Hola Tomás:
 
-Aclarar — Entendiste que la respuesta de la IA estaba bien en general y que en Argentina intervienen CONABIA, SENASA y Mercados. ¿Es así?
+Aclarar — Entendiste que el sistema argentino de regulación es sólido y que la respuesta de la IA sirve. ¿Es así?
 
-Valorar — Nombraste «CONABIA, SENASA y la Dirección Nacional de Mercados», que son los organismos que vimos en clase.
+Valorar — Nombraste las tres instancias: «CONABIA», «SENASA» y «Dirección Nacional de Mercados». Ese es el punto de partida correcto de la clase 3.
 
-Preguntar — Cuando decís que el sistema «garantiza la inocuidad», ¿qué instancia lo muestra y de dónde sale esa afirmación?
+Preguntar — Contame con tus palabras qué instancia de la clase 3 controla si el alimento es seguro para comer.
 
-Sugerir — Volvé a «Clase 2 — Cómo se obtiene un OGM» y explicá con tus palabras qué es un evento, citando esa sección; si usaste IA, contá qué parte y qué corregiste.
+Sugerir — Para la próxima versión, marcá en tu texto una cosa de la respuesta de la IA que esté bien, una que esté mal y una que falte, citando la sección de la clase 2 o la 3.
 
-Por ahora estás en Inicial en C2 y C3, y en En desarrollo en C1 y C4; para subir a Logrado te falta citar fuentes concretas y mostrar qué revisaste de la respuesta.
+Por ahora estás en Inicial en C2, C3 y C5, y en En desarrollo en C1 y C4; para subir a En desarrollo en C2 te falta citar una sección concreta de la clase, y en C3 revisar la respuesta punto por punto.
 
-Nota: 5/10. Para aprobar necesitás 7: trabajá sobre lo que te marqué y respondé este mail con la nueva versión.
+Nota: 5/10. Para aprobar necesitás 7: trabajá sobre lo que te marqué y respondé este mail con la nueva versión, contando en «Qué cambié:» qué corregiste y por qué.
 
 Prof. Hernán Pinciroli
 
-**Versión 2** (respondió el mismo hilo con la auditoría corregida): ver más abajo, en la devolución de Tomás para A4.
+**Versión 2** (respondió el mismo hilo con la auditoría corregida y «Qué cambié:»): ver más abajo, en la devolución de Tomás para A4.
 
 ---
 
@@ -44,21 +44,21 @@ Prof. Hernán Pinciroli
 ---
 
 **Para:** bruno.ficticio@ejemplo.edu  
-**Asunto:** [REVISAR] [BIO6-ALIM A4] Biotecnología — Devolución: te falta la auditoría en sí
+**Asunto:** [REVISAR] [BIO6-ALIM A4] Biotecnología — Devolución: la FDA y lo que falta
 
 Hola Bruno:
 
-Aclarar — Entiendo que notaste que la IA habló de la FDA y que sentís que tu trabajo ya está completo. ¿Es así?
+Aclarar — Entendiste que la FDA no corresponde acá y que faltan los organismos argentinos. ¿Es así?
 
-Valorar — Rescato que «La IA dijo cosas de la FDA»: es un primer indicio de que algo no encajaba con Argentina.
+Valorar — Muy bien que escribiste que la FDA «carece de competencia en el territorio argentino»: ahí explicaste por qué está mal, no solo que lo está.
 
-Preguntar — ¿Qué organismos intervienen en Argentina para aprobar un evento y qué hace cada uno?
+Preguntar — Escribiste que la norma evalúa cada evento por separado: ¿qué diferencia hay entre evento y cultivo, y por qué importa?
 
-Sugerir — Volvé a la sección «Clase 3 — El circuito de aprobación y control en Argentina». Después marcá en la respuesta de la IA qué estaba bien, qué estaba mal y qué omitió, y reescribila con tus palabras. Declará también qué hiciste con la IA.
+Sugerir — Escribí con tus palabras qué hace CONABIA, SENASA y Mercados, citando la clase 3 en lugar de «la normativa nacional».
 
-Por ahora estás en Inicial en C1, C2, C3 y C4; para subir a En desarrollo te falta auditar la respuesta con ejemplos concretos y declarar tu uso de la IA.
+Por ahora estás en Inicial en C2 y C3; para subir a En desarrollo te falta citar la clase 3 en lugar de «la normativa nacional».
 
-Nota: 4/10. Para aprobar necesitás 7: trabajá sobre lo que te marqué y respondé este mail con la nueva versión.
+Nota: 5/10. Para aprobar necesitás 7: trabajá sobre lo que te marqué y respondé este mail con la nueva versión, contando en «Qué cambié:» qué corregiste y por qué.
 
 Prof. Hernán Pinciroli
 
@@ -82,38 +82,38 @@ Prof. Hernán Pinciroli
 ---
 
 **Para:** camila.ficticia@ejemplo.edu  
-**Asunto:** [REVISAR] [BIO6-ALIM A4] Biotecnología — Devolución: buen comienzo con la FDA y el SENASA
+**Asunto:** [REVISAR] [BIO6-ALIM A4] Biotecnología — Devolución: buen arranque con la FDA y el SENASA
 
 Hola Camila:
 
-Aclarar — Entiendo que marcaste que la IA citó un organismo de otro país y omitió que cada evento se aprueba por separado. ¿Es así? No veo la reescritura con tus palabras.
+Aclarar — Entiendo que marcaste que la IA habló de la FDA y omitió el caso por caso, y que en Argentina participa el SENASA. ¿Es así?
 
-Valorar — Está bien visto que «La IA nombro a la FDA, que es de Estados Unidos» y que en Argentina «participa el SENASA».
+Valorar — Está bien que contrastes países: «En Argentina participa el SENASA». Y mejoraste respecto de la A1 al declarar la IA que usaste.
 
-Preguntar — ¿El SENASA es el único organismo que interviene, o qué otras instancias vimos y qué evalúa cada una?
+Preguntar — ¿SENASA es el único organismo en el circuito de aprobación de un evento? ¿Qué mira cada uno?
 
-Sugerir — Volvé a la sección «Clase 3 — El circuito de aprobación y control en Argentina». Sumá qué hace cada instancia, explicá por qué cada error de la IA lo es y escribí la reescritura. Citá la fuente con más detalle que «clase 3».
+Sugerir — Volvé a la sección «Clase 3 — El circuito de aprobación y control en Argentina». Sumá lo que omitió la IA, explicá por qué cada error lo es y escribí la reescritura con tus palabras. Agregá una pregunta tuya.
 
-Por ahora estás en En desarrollo en C3; para subir a Logrado te falta detectar más errores y omisiones y explicar por qué, con fuentes concretas.
+Por ahora estás en En desarrollo en C3; para subir a Logrado te falta detectar más errores u omisiones y explicar por qué, con fuentes concretas.
 
-Nota: 6/10. Para aprobar necesitás 7: trabajá sobre lo que te marqué y respondé este mail con la nueva versión.
+Nota: 6/10. Para aprobar necesitás 7: trabajá sobre lo que te marqué y respondé este mail con la nueva versión, contando en «Qué cambié:» qué corregiste y por qué.
 
 Prof. Hernán Pinciroli
 
 ---
 
 **Para:** joaquin.ficticio@ejemplo.edu  
-**Asunto:** [BIO6-ALIM A1] Biotecnología — Devolución: fideos, falta completar
+**Asunto:** [BIO6-ALIM A1] Biotecnología — Devolución: tus fideos y la etiqueta
 
 Hola Joaquín:
 
-Aclarar — Entiendo que elegiste fideos y que la etiqueta que subiste tiene datos de registro, pero no escribiste qué sabés ni qué suponés. ¿Es así?
+Aclarar — Entendí que elegiste fideos y que la etiqueta tiene datos, pero no escribiste qué sabés ni qué suponés. ¿Es así?
 
-Valorar — Subiste la foto de la etiqueta con «RNE02-031456» y «RNPA02-512345», y eso es lo que pedía la consigna.
+Valorar — Fijarte en el RNPA02-512345 de la etiqueta es un buen punto de partida, porque es uno de los datos que pide la consigna.
 
-Preguntar — ¿Qué sabés del origen del trigo candeal de esos fideos?
+Preguntar — Según la etiqueta, ¿qué sabés de quién elabora los fideos y quién lo controla?
 
-Sugerir — Completá la entrega con qué sabés, qué suponés y qué no sabés, y pegá la respuesta de la IA sin corregirla.
+Sugerir — Completá la consigna: contá qué sabés, qué suponés y qué no sabés de tus fideos, y pegá la respuesta de la IA sin corregirla.
 
 Prof. Hernán Pinciroli
 
@@ -132,36 +132,36 @@ Prof. Hernán Pinciroli
 ---
 
 **Para:** lucia.ficticia@ejemplo.edu  
-**Asunto:** [BIO6-ALIM A1] Biotecnología — Devolución: saber y suponer, bien separados
+**Asunto:** [BIO6-ALIM A1] Biotecnología — Devolución: tu leche chocolatada y quién la controla
 
 Hola Lucía:
 
-Aclarar — Entiendo que sabés el registro y el fabricante de tu producto, pero no sabés si el cacao es transgénico ni quién lo revisa. ¿Es así?
+Aclarar — Entendí que sabés el RNPA y la empresa de Córdoba, pero no sabés quién controla si el cacao o el azúcar son transgénicos. ¿Es así?
 
-Valorar — Está bien que separaste lo que sabés de lo que no: «Sé que tiene RNPA y que la hace una empresa de Córdoba» y «No sé si el cacao o algo es transgénico».
+Valorar — Muy bien distinguir lo que no sabés: «sé poco de quién controla, quiero saber eso» es exactamente lo que pide esta actividad.
 
-Preguntar — ¿Qué organismo nacional revisa la seguridad de un alimento elaborado en Argentina? Buscalo en la sección «Clase 3 — El circuito de aprobación y control en Argentina».
+Preguntar — La IA citó la FDA: ¿qué organismo argentino cumpliría ese papel para tu leche chocolatada?
 
-Sugerir — Para la próxima entrega, anotá qué controla cada organismo que aparece en esa clase y qué te falta entender de cada uno.
+Sugerir — Volvé a la sección «Clase 3 — El circuito de aprobación y control en Argentina» y anotá qué hace cada instancia pensando en tu leche chocolatada.
 
 Prof. Hernán Pinciroli
 
 ---
 
 **Para:** lucia.ficticia@ejemplo.edu  
-**Asunto:** [BIO6-ALIM A4] Biotecnología — Devolución: buena detección del país
+**Asunto:** [BIO6-ALIM A4] Biotecnología — Devolución: cómo saber de qué país habla la IA
 
 Hola Lucía:
 
-Aclarar — Entendiste que la FDA no corresponde a Argentina y que faltó nombrar quién controla acá. ¿Es así?
+Aclarar — Entendiste que la IA se equivocó de país y que en Argentina el control de la leche lo hace el SENASA. ¿Es así?
 
-Valorar — «acá no la usamos, eso está mal» es un buen corte: detectaste que la fuente era de otro país.
+Valorar — «acá no la usamos, eso está mal» es una buena forma de auditar una respuesta. Tu pregunta sobre cómo saber de qué país te habla la IA va al fondo del problema.
 
-Preguntar — Si el RNPA identifica al producto en góndola, ¿qué organismo del circuito de la clase 3 lo controla?
+Preguntar — Volvé a la sección «Clase 3 — El circuito de aprobación y control en Argentina» y respondé: ¿qué controla el RNPA del producto y en qué se diferencia del RNE de la fábrica?
 
-Sugerir — Volvé a la sección «Clase 3 — El circuito de aprobación y control en Argentina» y escribí, para cada uno de los tres organismos, una línea sobre qué evalúa.
+Sugerir — Volvé a la clase 3 y reescribí lo del jarabe de maíz: qué dice la clase sobre el ADN del evento en azúcares derivados de cultivos OGM.
 
-Por ahora estás en En desarrollo en C1, C2 y C3, y en Logrado en C4; para subir a Logrado en C1–C3 te falta usar los términos con precisión, citar la sección concreta de la clase y explicar por qué cada error lo es.
+Por ahora estás en En desarrollo en C1, C2 y C3; para llegar a Logrado en C1 te falta usar «evento», «inocuidad» y «trazabilidad», y en C2 citar la sección concreta de la clase.
 
 Nota: 7/10 — ¡Aprobada! Si querés seguir profundizando, la pregunta de arriba es para vos.
 
@@ -170,36 +170,36 @@ Prof. Hernán Pinciroli
 ---
 
 **Para:** martina.ficticia@ejemplo.edu  
-**Asunto:** [BIO6-ALIM A1] Biotecnología — Devolución: el girasol y el organismo que falta
+**Asunto:** [BIO6-ALIM A1] Biotecnología — Devolución: saber, suponer y el RNE
 
 Hola Martina:
 
-Aclarar — Entiendo que sabés el RNE y el RNPA de la etiqueta y que suponés que el girasol no es transgénico, aunque no estás segura. ¿Es así?
+Aclarar — Entendí que sabés leer el RNE y el RNPA, y que suponés que el girasol no es transgénico porque no lo viste en el cuaderno. ¿Es así?
 
-Valorar — Está muy bien que marcaste lo que no estás segura: «pero no estoy segura». Eso separa saber de suponer, que era la consigna.
+Valorar — Marcaste bien lo que suponés: «Supongo que el girasol no es transgénico» aparece como suposición, no como dato.
 
-Preguntar — ¿Alcanza con no haber visto un evento de girasol en el cuaderno para decir que no hay ninguno aprobado? Revisá la sección «Clase 2 — Cómo se obtiene un OGM».
+Preguntar — ¿Qué fuente te serviría para confirmar si existe algún evento aprobado de girasol en Argentina?
 
-Sugerir — Volvé a la sección «Clase 3 — El circuito de aprobación y control en Argentina» y buscá qué organismo controla la aptitud alimentaria del producto.
+Sugerir — Volvé a la sección «Clase 3 — El circuito de aprobación y control en Argentina» y anotá qué organismo controla la fábrica que figura en tu etiqueta.
 
 Prof. Hernán Pinciroli
 
 ---
 
 **Para:** martina.ficticia@ejemplo.edu  
-**Asunto:** [BIO6-ALIM A4] Biotecnología — Devolución: la explicación de la pregunta
+**Asunto:** [BIO6-ALIM A4] Biotecnología — Devolución: el aceite, el evento y el caso HB4
 
 Hola Martina:
 
-Aclarar — Entendiste que la IA respondió con datos de otros países porque le preguntaste en general, y que faltan CONABIA, SENASA, Mercados, RNE y RNPA. ¿Es así?
+Aclarar — Entendiste que tu aceite de girasol no viene de un cultivo transgénico y que la fábrica la controla el RNE y el RNPA. ¿Es así?
 
-Valorar — «le pregunte en general y no por Argentina» es una explicación concreta de por qué la IA omitió lo local, y la respaldás con la clase 3.
+Valorar — «Aunque viniera de un cultivo OGM, en el aceite refinado casi no queda ADN ni proteina del evento» relaciona dos conceptos en vez de solo nombrarlos.
 
-Preguntar — Si volvieras a preguntarle a la IA, ¿qué le pedirías para que te diera los organismos argentinos?
+Preguntar — Volvé a la sección «Clase 3» y respondé: ¿qué diferencia hay entre aprobar un evento caso por caso y controlar un producto en góndola?
 
-Sugerir — Antes de buscar el caso HB4 afuera, leé el estudio de caso de la clase 3 y respondé en dos líneas cuánto tarda la aprobación y por qué.
+Sugerir — Seguí con el caso HB4 de la clase 3 y respondé tu propia pregunta: anotá qué pasos fueron locales, cuáles públicos y cuáles comerciales.
 
-Por ahora estás en Logrado en C1, C2 y C3, y en Destacado en C4; para llegar a Destacado en C1 te falta explicar por qué pasa lo del aceite, y en C3, decir cómo preguntarías mejor a la IA.
+Por ahora estás en Logrado en C1, C2 y C3, y en Destacado en C4 y C5; para subir a Destacado en C2 te falta contrastar fuentes y señalar qué intereses hay detrás de alguna.
 
 Nota: 9/10 — ¡Aprobada! Si querés seguir profundizando, la pregunta de arriba es para vos.
 
@@ -208,36 +208,36 @@ Prof. Hernán Pinciroli
 ---
 
 **Para:** sofia.ficticia@ejemplo.edu  
-**Asunto:** [BIO6-ALIM A1] Biotecnología — Devolución: polenta y el abuelo productor
+**Asunto:** [BIO6-ALIM A1] Biotecnología — Devolución: polenta, tu abuelo y el maíz Bt
 
 Hola Sofía:
 
-Aclarar — Entiendo que sabés del maíz por tu abuelo y que sospechás que la polenta puede venir de maíz Bt, pero no sabés si el proceso cambia algo. ¿Es así?
+Aclarar — Entendí que sabés bastante del maíz por tu abuelo y que dudás si el maíz de la polenta es transgénico por el Bt que se siembra. ¿Es así?
 
-Valorar — Está muy bien separar lo que sabés de lo que supone: «Sé bastante del maíz por mi abuelo» y «Supongo que el maíz puede ser transgénico».
+Valorar — Separaste bien lo que sabés: «Sé bastante del maíz por mi abuelo que es productor» y lo que te falta, «lo de la aprobación».
 
-Preguntar — ¿Qué instancia del circuito de aprobación revisa si el maíz es apto para consumo humano? Buscalo en la «Clase 3 — El circuito de aprobación y control en Argentina».
+Preguntar — La IA dice que el maíz argentino es «mayoritariamente genéticamente modificado»: ¿de dónde sacarías un dato que lo compruebe?
 
-Sugerir — Anotá qué instancias revisan un evento antes de llegar a la góndola, y cuál de ellas se ocupa de la inocuidad.
+Sugerir — Para responder tu pregunta sobre las semillas, buscá en la sección «Clase 3 — El circuito de aprobación y control en Argentina» qué instancia aprueba cada evento de maíz.
 
 Prof. Hernán Pinciroli
 
 ---
 
 **Para:** sofia.ficticia@ejemplo.edu  
-**Asunto:** [BIO6-ALIM A4] Biotecnología — Devolución: buena pregunta sobre el glifosato
+**Asunto:** [BIO6-ALIM A4] Biotecnología — Devolución: tu pregunta sobre el glifosato da para pensar
 
 Hola Sofía:
 
-Aclarar — Entiendo que viste que la IA omitió la aprobación de cada evento por separado. También entiendo que tu duda es si el glifosato forma parte del transgénico. ¿Es así? El esquema que subiste tiene formas y flechas, pero sin rótulos, y no lo pude interpretar.
+Aclarar — Entiendo que ves bien lo del maíz, que la IA omitió que cada evento se aprueba aparte, y que dudás si el glifosato forma parte del transgénico. Tu esquema muestra un círculo, una caja y un óvalo, pero sin rótulos. ¿Es así?
 
-Valorar — Valoro que escribas «Me confunde si el glifosato es parte del transgénico o no»: nombrar la duda es el paso para resolverla.
+Valorar — Muy buena tu pregunta: «¿por qué siempre aparecen juntos en las noticias?». Conecta dos temas y cuestiona lo que se repite.
 
-Preguntar — ¿Qué dice la clase sobre cómo se obtiene un evento y qué diferencia hay entre una modificación genética y un herbicida?
+Preguntar — Tu abuelo opina y la clase aporta evidencia. En la sección «Clase 2 — Cómo se obtiene un OGM», ¿dónde aparece el glifosato en los pasos para obtener un evento?
 
-Sugerir — Volvé a la sección «Clase 2 — Cómo se obtiene un OGM» y rotulá cada parte de tu esquema. Después contrastá lo que dice tu abuelo con esa fuente y anotá cuál es evidencia y cuál opinión.
+Sugerir — Rotulá tu esquema con los pasos de la clase 2. Después reescribí la respuesta distinguiendo la opinión de tu abuelo de lo que dice la clase, citando secciones concretas.
 
-Por ahora estás en En desarrollo en C1, C2 y C3; para subir a Logrado te falta separar bien gen y agroquímico y citar fuentes concretas de clase.
+Por ahora estás en En desarrollo en C3; para subir a Logrado te falta explicar por qué cada punto es un error u omisión, con fuentes concretas.
 
 Nota: 7/10 — ¡Aprobada! Si querés seguir profundizando, la pregunta de arriba es para vos.
 
@@ -246,38 +246,38 @@ Prof. Hernán Pinciroli
 ---
 
 **Para:** tomas.ficticio@ejemplo.edu  
-**Asunto:** [BIO6-ALIM A1] Biotecnología — Devolución: galletitas, químicos y transgénicos
+**Asunto:** [BIO6-ALIM A1] Biotecnología — Devolución: lo que dijiste de las galletitas
 
 Hola Tomás:
 
-Aclarar — Entiendo que para vos los transgénicos tienen químicos que hacen mal, y por eso conviene comer orgánico. ¿Es así?
+Aclarar — Entendí que para vos los transgénicos tienen químicos que hacen mal y que nadie controla lo que comemos. ¿Es así?
 
-Valorar — Está bien que dejaste una posición escrita: «Nadie controla eso en Argentina». Eso te da algo concreto para revisar.
+Valorar — Pusiste la respuesta de la IA tal cual, como pedía la consigna, y eso permite comparar: tu «Nadie controla eso en Argentina» frente a «la seguridad es evaluada por autoridades sanitarias».
 
-Preguntar — Según «Clase 2 — Cómo se obtiene un OGM», ¿qué se le cambia a la planta para que sea transgénica?
+Preguntar — ¿Qué querés decir con «transgénico»: un cultivo con un gen cambiado en su genoma, o un producto con químicos?
 
-Sugerir — Volvé a la sección «Clase 3 — El circuito de aprobación y control en Argentina» y anotá qué instancias revisan un alimento elaborado antes y después de llegar a la góndola.
+Sugerir — Volvé a la sección «Clase 2 — Cómo se obtiene un OGM» y escribí con tus palabras qué es un evento y en qué se diferencia de un agroquímico.
 
 Prof. Hernán Pinciroli
 
 ---
 
 **Para:** tomas.ficticio@ejemplo.edu  
-**Asunto:** [BIO6-ALIM A4] Biotecnología — Devolución: buen corte al «garantiza»
+**Asunto:** [BIO6-ALIM A4] Biotecnología — Devolución: de pegar a escribir
 
 Hola Tomás:
 
-Aclarar — Entendiste que la IA habló del transgénico en general y que cada evento se aprueba aparte. ¿Es así?
+Aclarar — Entendiste que cada organismo hace una tarea distinta y que el control en góndola es otro circuito. ¿Es así?
 
-Valorar — Muy bien que marques «garantiza todo sin explicar cómo»: lo señalaste como afirmación sin respaldo, que era justo lo que pedía la auditoría.
+Valorar — Me gusta que escribiste «Ahora escribí yo qué hace cada organismo» y que «separé evento de cultivo»: eso ya es tuyo, no pegado.
 
-Preguntar — ¿Qué es un evento según la clase 2, y en qué se diferencia de hablar de «el transgénico» en general?
+Preguntar — Si el aceite refinado casi no tiene ADN del evento, ¿qué cambia en el control de ese producto?
 
-Sugerir — Para la próxima versión, sumá a la reescritura la definición de evento con los pasos de la clase 2 (gen de interés, construcción, transformación, selección).
+Sugerir — Sumá qué significa trazabilidad y por qué el proceso de aprobación tarda años, citando la clase 3.
 
-Subiste a Logrado en C2, C3 y C4. Por ahora estás en En desarrollo en C1; para llegar a Logrado te falta usar trazabilidad y definir evento con la clase 2.
+Por ahora estás en En desarrollo en C1, C2 y C3; para subir a Logrado en C1 te falta trazabilidad, y en C3 detectar más errores y explicar por qué.
 
-Nota: 8/10 — ¡Aprobada! (versión 2) Si querés seguir profundizando, la pregunta de arriba es para vos.
+Nota: 6/10. Para aprobar necesitás 7: trabajá sobre lo que te marqué y respondé este mail con la nueva versión, contando en «Qué cambié:» qué corregiste y por qué.
 
 Prof. Hernán Pinciroli
 

@@ -40,6 +40,8 @@ ETIQUETA_IA = re.compile(r"^\s*[¿]?\s*(uso de (la )?ia|usaste (la )?ia|ia|intel
 ETIQUETA_AUTO = re.compile(r"^\s*[¿]?\s*(autoevaluaci[óo]n|qu[ée] entend[íi]|qu[ée] me falta|lo que entend[íi])\b[^:\n]*[:?]\s*",
                            re.I | re.M)
 ETIQUETA_RESP = re.compile(r"^\s*(mi )?(trabajo|respuesta)\s*:\s*", re.I | re.M)
+ETIQUETA_PREG = re.compile(r"^\s*[¿]?\s*(mi )?pregunta\b[^:\n]*[:?]\s*", re.I | re.M)
+ETIQUETA_CAMBIOS = re.compile(r"^\s*[¿]?\s*(qu[ée] cambi[ée]|cambios|lo que cambi[ée])\b[^:\n]*[:?]\s*", re.I | re.M)
 
 
 # ---------------- lectura del mensaje ----------------
@@ -98,13 +100,15 @@ def sin_cita(texto: str) -> str:
 
 def separar_partes(texto: str) -> dict:
     """Divide el cuerpo en respuesta, uso de IA y autoevaluación según las etiquetas
-    que pide el mail del trabajo. Lo que no tiene etiqueta es la respuesta."""
+    que pide el mail del trabajo (IA, Autoevaluación, Mi pregunta, Qué cambié). Lo que no tiene
+    etiqueta es la respuesta."""
     marcas = []
-    for campo, rx in (("uso_ia", ETIQUETA_IA), ("autoevaluacion", ETIQUETA_AUTO), ("respuesta", ETIQUETA_RESP)):
+    for campo, rx in (("uso_ia", ETIQUETA_IA), ("autoevaluacion", ETIQUETA_AUTO), ("respuesta", ETIQUETA_RESP),
+                      ("pregunta", ETIQUETA_PREG), ("cambios", ETIQUETA_CAMBIOS)):
         for m in rx.finditer(texto):
             marcas.append((m.start(), m.end(), campo))
     marcas.sort()
-    partes = {"respuesta": "", "uso_ia": "", "autoevaluacion": ""}
+    partes = {"respuesta": "", "uso_ia": "", "autoevaluacion": "", "pregunta": "", "cambios": ""}
     if not marcas:
         partes["respuesta"] = texto.strip()
         return partes

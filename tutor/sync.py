@@ -60,12 +60,14 @@ def cargar_entregas(con, filas) -> dict:
         flags = [f"adjuntos: {a}" for a in f.get("avisos", [])]
         cur = con.execute(
             """INSERT OR IGNORE INTO entregas (marca_temporal, mail, nombre, unidad, actividad,
-               respuesta, uso_ia, autoevaluacion, archivos, message_id, flags) VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+               respuesta, uso_ia, autoevaluacion, archivos, message_id, flags, pregunta, cambios)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (_fecha(f.get("marca_temporal", "")), mail, seguridad.limpiar_texto(f.get("nombre", ""))[:80],
              f["unidad"].strip()[:40], f["actividad"].strip().split()[0][:10],
              seguridad.limpiar_texto(f.get("respuesta", "")), seguridad.limpiar_texto(f.get("uso_ia", "")),
              seguridad.limpiar_texto(f.get("autoevaluacion", "")), "\n".join(archivos), f.get("message_id") or None,
-             json.dumps(flags, ensure_ascii=False) if flags else None),
+             json.dumps(flags, ensure_ascii=False) if flags else None,
+             seguridad.limpiar_texto(f.get("pregunta", ""))[:1000], seguridad.limpiar_texto(f.get("cambios", ""))[:2000]),
         )
         if cur.rowcount:
             nuevas += 1

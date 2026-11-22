@@ -186,4 +186,4 @@ def test_purgar_anonimiza(cfg, con, capsys):
     cli.main(["--piloto", "purgar", "--ciclo", "2026", "--anonimizar", "--confirmar"])
     c2 = db.conectar(cfg.db)
     assert c2.execute("SELECT COUNT(*) FROM entregas WHERE mail LIKE '%ejemplo.edu'").fetchone()[0] == 0
-    assert c2.execute("SELECT COUNT(*) FROM entregas").fetchone()[0] == 15
+    assert c2.execute("SELECT COUNT(*) FROM entregas").fetchone()[0] == 16

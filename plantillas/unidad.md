@@ -26,7 +26,7 @@ Cada actividad tiene un código (A1, A2…) que va en el asunto del mail del tra
 - **Consigna para el alumno:**
 - **Qué se espera ver (respuesta experta, solo para el agente — NUNCA se le muestra al alumno):**
 - **Ideas previas erróneas frecuentes a detectar:**
-- **Criterios que se evalúan:** C1, C2…
+- **Criterios que se evalúan:** C1, C2… (C4 y C5 conviene ponerlos en todas: metacognición y curiosidad)
 
 ### A2 — <nombre> (intermedia / profundización)
 …
@@ -43,6 +43,7 @@ Niveles fijos para todas las unidades: **Inicial · En desarrollo · Logrado · 
 | C2 — <nombre> | | | | |
 | C3 — Discernimiento frente a la IA | No declara el uso o pega la respuesta sin revisarla. | Declara el uso y corrige algo, sin decir por qué. | Declara qué le pidió a la IA, qué corrigió y por qué, con fuentes de clase. | Además explica por qué la IA se equivocó y cómo preguntaría mejor. |
 | C4 — Metacognición | No se autoevalúa. | Se autoevalúa con una frase genérica. | Identifica qué entendió y qué no. | Identifica qué le falta y propone su próximo paso. |
+| C5 — Curiosidad (la pregunta del alumno) | No deja pregunta o es de trámite ("¿para cuándo es?"). | Pregunta algo general o que ya respondió la clase. | Pregunta algo concreto que conecta con el tema y muestra que pensó. | Su pregunta abre un problema nuevo, relaciona temas o cuestiona una fuente. |
 
 > C3 y C4 son transversales y van en todas las unidades. C1, C2… son disciplinares y los fija el docente.
 

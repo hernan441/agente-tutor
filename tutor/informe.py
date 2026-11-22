@@ -70,7 +70,10 @@ def resumen(con, unidad, faltan: list) -> dict:
         if not f["inscripto"]:
             alertas.append(f"{f['mail']} entregó {f['actividad']} sin estar inscripto (liberada por el docente)")
     notas = [f"{f['nombre']} {f['actividad']}: {f['nota_docente']}" for f in filas if f["nota_docente"]]
+    from . import grupos
     return {"unidad": unidad.codigo, "titulo": unidad.titulo, "tabla": tabla, "iteraciones": iteraciones(con, unidad),
+            "preguntas": mejores_preguntas(con, unidad), "escuchar": para_escuchar(con, unidad),
+            "grupos": grupos.proponer(grupos.ultimas(con, unidad)),
             "ideas": [(i, n, sorted(set(quien_idea[i]))) for i, n in ideas.most_common()],
             "alertas": alertas, "no_entregaron": [f"{x['nombre']} {x['apellido']} ({x['actividad']})" for x in faltan],
             "notas": notas}
@@ -92,6 +95,55 @@ def iteraciones(con, unidad, aprobacion: int = 7, maximo: int = 6) -> dict:
         txt = f"{r['nombre']} {r['actividad']}: {r['ultima']}/10 (versión {r['n']})"
         (aprobados if r["ultima"] >= aprobacion else iterando).append(txt + ("" if r["ultima"] >= aprobacion else f" de {maximo}"))
     return {"aprobados": aprobados, "iterando": iterando}
+
+
+def mejores_preguntas(con, unidad, maximo: int = 8) -> list:
+    """Las preguntas de los alumnos que el agente valoró mejor en C5 (para abrir la clase)."""
+    out = []
+    for r in con.execute(
+            """SELECT e.nombre, e.actividad, e.pregunta, ev.nivel FROM entregas e
+               JOIN evaluaciones ev ON ev.entrega_id=e.id AND ev.criterio='C5'
+               WHERE e.unidad=? AND e.estado='ok' AND COALESCE(e.pregunta,'') != ''
+                 AND ev.nivel IN ('Destacado','Logrado')
+               ORDER BY ev.nivel='Destacado' DESC, e.marca_temporal DESC""", (unidad.codigo,)):
+        out.append({"alumno": r["nombre"], "actividad": r["actividad"], "nivel": r["nivel"], "pregunta": r["pregunta"][:300]})
+    return out[:maximo]
+
+
+SALTO_NOTA = 3
+
+
+def para_escuchar(con, unidad) -> list:
+    """A quién conviene escuchar en clase (2 min) y con qué preguntas: señal de copia acrítica,
+    alerta de proceso (reescritura total, salto de largo) o salto grande de nota entre versiones.
+    Solo la última versión de cada alumno y actividad."""
+    out = []
+    for r in con.execute(
+            """SELECT e.id, e.mail, e.nombre, e.actividad, e.flags, an.senal_ia, an.senal_ia_motivo, an.nota,
+                      an.preguntas_orales, an.intento_manipulacion FROM entregas e JOIN analisis an ON an.entrega_id=e.id
+               WHERE e.unidad=? AND e.estado='ok' AND e.id = (
+                 SELECT e2.id FROM entregas e2 JOIN analisis a2 ON a2.entrega_id=e2.id
+                 WHERE e2.mail=e.mail AND e2.unidad=e.unidad AND e2.actividad=e.actividad AND e2.estado='ok'
+                 ORDER BY e2.marca_temporal DESC, e2.id DESC LIMIT 1)
+               ORDER BY e.nombre""", (unidad.codigo,)):
+        motivos = []
+        if r["senal_ia"]:
+            motivos.append("señal de copia acrítica" + (f": {r['senal_ia_motivo'].rstrip('. ')}" if r["senal_ia_motivo"] else ""))
+        if r["intento_manipulacion"]:
+            motivos.append("intentó manipular la evaluación desde el texto")
+        motivos += [f.split(":", 1)[1] for f in json.loads(r["flags"] or "[]")
+                    if f.startswith("proceso:") and "sin explicar" not in f]
+        prev = con.execute(
+            """SELECT an.nota FROM entregas e JOIN analisis an ON an.entrega_id=e.id
+               WHERE e.mail=? AND e.unidad=? AND e.actividad=? AND e.estado='ok' AND e.id<?
+               ORDER BY e.marca_temporal DESC, e.id DESC LIMIT 1""",
+            (r["mail"], unidad.codigo, r["actividad"], r["id"])).fetchone()
+        if prev and prev["nota"] is not None and r["nota"] is not None and r["nota"] - prev["nota"] >= SALTO_NOTA:
+            motivos.append(f"subió de {prev['nota']} a {r['nota']} entre versiones")
+        if motivos:
+            out.append({"alumno": r["nombre"], "actividad": r["actividad"], "motivos": motivos,
+                        "preguntas": json.loads(r["preguntas_orales"] or "[]")})
+    return out
 
 
 def mails_a_revisar(con) -> list:
@@ -143,6 +195,25 @@ def escribir_informe(cfg, unidad, res: dict, sintesis: dict, hoy, uso: dict) -> 
     o += ["", f"**No entregaron (recordatorio armado):** {', '.join(res['no_entregaron']) or 'nadie'}", "",
           "## Ideas erróneas más repetidas"]
     o += [f"{k}. {i} — {n} ({', '.join(q)})" for k, (i, n, q) in enumerate(res["ideas"][:6], 1)] or ["Ninguna."]
+    if res.get("escuchar"):
+        o += ["", "## Para escuchar en clase (2 minutos, en voz alta)",
+              "_No es una acusación: es comprobar con la persona que entiende lo que entregó._"]
+        for x in res["escuchar"]:
+            o.append(f"- **{x['alumno']}** ({x['actividad']}): {'; '.join(x['motivos'])}")
+            o += [f"  - {q}" for q in x["preguntas"]] or ["  - (sin preguntas sugeridas: preguntale cómo llegó a su respuesta)"]
+    if res.get("preguntas"):
+        o += ["", "## Preguntas de los alumnos para abrir la clase"]
+        o += [f"- «{x['pregunta']}» — {x['alumno']} ({x['actividad']}, {x['nivel']})" for x in res["preguntas"]]
+    g = res.get("grupos") or {}
+    if g.get("mixtos") or g.get("discusion"):
+        o += ["", f"## Propuesta de grupos para la próxima clase ({g.get('actividad', '')})"]
+        if g.get("mixtos"):
+            o.append(f"**Grupos mixtos sobre {g['criterio_flojo']}** (el criterio más flojo del curso; repartidos de mayor a menor nivel para que cada grupo mezcle):")
+            o += [f"{k}. {', '.join(m)}" for k, m in enumerate(g["mixtos"], 1)]
+        if g.get("discusion"):
+            o.append("")
+            o.append("**Grupos de discusión por idea errónea compartida:**")
+            o += [f"- {idea}: {', '.join(n)}" for idea, n in g["discusion"]]
     o += ["", "## Alertas"] + ([f"- {a}" for a in res["alertas"]] or ["- Ninguna."])
     o += ["", "## Sugerencias para la próxima clase"] + [f"- {s}" for s in sintesis.get("sugerencias", [])][:3]
     if seg:

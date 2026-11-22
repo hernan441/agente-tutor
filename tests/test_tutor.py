@@ -40,9 +40,9 @@ def test_esquema_idempotente(cfg):
 
 def test_unidad_parseada(unidad):
     assert unidad.cursos == ["6A"]
-    assert unidad.actividades["A4"].criterios == ["C1", "C2", "C3", "C4"]
+    assert unidad.actividades["A4"].criterios == ["C1", "C2", "C3", "C4", "C5"]
     assert "A1" in unidad.sin_nota
-    assert set(unidad.rubrica) == {"C1", "C2", "C3", "C4"}
+    assert set(unidad.rubrica) == {"C1", "C2", "C3", "C4", "C5"}
     assert unidad.firma == "Prof. Hernán Pinciroli"
 
 
@@ -50,7 +50,7 @@ def test_sync_piloto_sin_duplicar(cfg, con):
     r1 = sync.sincronizar(cfg, con)
     r2 = sync.sincronizar(cfg, con)
     assert r1["inscripcion"]["nuevos"] == 8 and r1["inscripcion"]["rechazados"] == 2
-    assert r1["entregas"]["nuevas"] == 15 and r1["entregas"]["sin_inscripcion"] == 1
+    assert r1["entregas"]["nuevas"] == 16 and r1["entregas"]["sin_inscripcion"] == 1
     assert r1["mails"]["revisar"] == 2 and r1["mails"]["ignorado"] == 1
     assert r2["entregas"]["nuevas"] == 0 and r2["mails"]["visto"] == sum(r1["mails"].values())
 
@@ -93,7 +93,7 @@ def _paquete(con, cfg, unidad, nombre="Tomás", act="A4"):
 
 def test_paquete_compacto(cfg, con, unidad):
     p = _paquete(con, cfg, unidad)
-    assert set(p["rubrica"]) == {"C1", "C2", "C3", "C4"}
+    assert set(p["rubrica"]) == {"C1", "C2", "C3", "C4", "C5"}
     assert p["actividad"]["lleva_nota"] is True
     assert any("Gemini" in x for x in p["antecedentes"]["uso_ia_declarado_antes"])
 

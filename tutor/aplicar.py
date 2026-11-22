@@ -41,7 +41,7 @@ def linea_nota(nota: int | None, aprobacion: int, iteracion: int) -> str:
         return (f"Nota: {nota}/10 — ¡Aprobada!" + (f" (versión {iteracion})" if iteracion > 1 else "")
                 + " Si querés seguir profundizando, la pregunta de arriba es para vos.")
     return (f"Nota: {nota}/10. Para aprobar necesitás {aprobacion}: trabajá sobre lo que te marqué "
-            "y respondé este mail con la nueva versión.")
+            "y respondé este mail con la nueva versión, contando en «Qué cambié:» qué corregiste y por qué.")
 
 
 def _palabras(s: str) -> list:
@@ -105,6 +105,19 @@ def validar(r: dict, paquete: dict) -> list:
         avisos.append("la IA detectó un intento de manipular la evaluación")
     for s_ in paquete.get("_sospechas", []):
         avisos.append(f"sospecha de inyección: {s_}")
+    for al in paquete.get("_proceso", []):
+        if not al.startswith("versión nueva sin explicar"):  # eso solo se informa, no frena
+            avisos.append(f"proceso: {al}")
+    # Preguntas para verificar en clase (opcionales): máx. 2, cortas, sin enlaces ni datos internos
+    po = r.get("preguntas_orales") or []
+    if not isinstance(po, list):
+        raise Invalido("preguntas_orales tiene que ser una lista")
+    limpias = []
+    for q in po[:2]:
+        q = str(q).strip()[:220]
+        if q and not any(rx.search(q) for _, rx in PROHIBIDO_EN_DEVOLUCION) and not (canario and canario in q):
+            limpias.append(q)
+    r["preguntas_orales"] = limpias
     if not paquete["actividad"]["lleva_nota"]:
         r["nivel_msg"] = ""
     return avisos
@@ -138,12 +151,13 @@ def guardar(con, unidad, paquete, r: dict, avisos: list, meta: dict | None = Non
     con.execute(
         """INSERT OR REPLACE INTO analisis (entrega_id, ideas_erroneas, senal_ia, senal_ia_motivo,
            nota_docente, proximo_paso, revisar, revisar_motivo, json_raw, intento_manipulacion,
-           camino, modelo, version_prompt, nota)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+           camino, modelo, version_prompt, nota, preguntas_orales)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         (eid, json.dumps(r.get("ideas_erroneas", []), ensure_ascii=False), int(bool(r.get("senal_ia"))),
          r.get("senal_ia_motivo", ""), r.get("nota_docente", ""), r.get("proximo_paso", ""),
          int(bool(avisos)), "; ".join(avisos), json.dumps(r, ensure_ascii=False),
-         int(bool(r.get("intento_manipulacion"))), meta.get("camino"), meta.get("modelo"), meta.get("version_prompt"), nota))
+         int(bool(r.get("intento_manipulacion"))), meta.get("camino"), meta.get("modelo"), meta.get("version_prompt"), nota,
+         json.dumps(r.get("preguntas_orales") or [], ensure_ascii=False)))
     # El código va en el asunto: si el alumno responde con una nueva versión, se reconoce sola.
     asunto = f"[{fila['unidad']} {fila['actividad']}] {unidad.materia} — Devolución: {r['asunto'].strip()}"
     if avisos:
